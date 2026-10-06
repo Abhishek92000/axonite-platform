@@ -1,0 +1,241 @@
+@page "/workforce/order-confirmations"
+@rendermode InteractiveServer
+@*
+    OrderConfirmations.razor - route /workforce/order-confirmations
+    ------------------------------------------------------------------------
+    A faithful build of the reference Order Confirmations page, using Polypus
+    branding:
+
+      1. Hero "Ensure your POs turn into correct deliveries, every time." with a
+         Start Now button and a match-status panel
+      2. How it works - the unstructured-acknowledgments narrative beside a
+         media panel
+      3. GBS Skills to get every order confirmed - all 12 skills from the
+         reference, each tagged Low / Medium / High complexity
+      4. Closing CTA "Manage every purchase order with confidence"
+      5. The six reference questions, using the shared FaqList accordion
+
+    Copy is carried verbatim from the reference; only the brand name is swapped
+    (Hypatos -> Polypus). Styles live in OrderConfirmations.razor.css and use the
+    Polypus design tokens, so nothing here copies the reference theme.
+
+    Linked from: the /workforce bundle grid.
+*@
+
+<PageTitle>Order Confirmations - Polypus Workforce</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="A workforce catching and matching every line, price and quantity on supplier order confirmations, so procurement sees which orders deviate." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section oc-hero">
+    <div class="container">
+        <div class="oc-hero__inner">
+            <div>
+                <p class="eyebrow">The GBS Workforce for Order Confirmations</p>
+                <h1 class="display oc-hero__title">Ensure your POs turn into correct deliveries, every time.</h1>
+
+                <div class="oc-hero__action">
+                    <a class="btn btn--primary btn--lg" href="#oc-skills">
+                        Start Now
+                        <AppIcon Name="arrow-right" Size="18" />
+                    </a>
+                </div>
+            </div>
+
+            <div class="oc-match" aria-hidden="true">
+                <div class="oc-match__head">
+                    <span>Order confirmation</span>
+                    <span>Matched to PO</span>
+                </div>
+
+                <div class="oc-match__row">
+                    <span class="oc-match__line">
+                        Price and unit of measure
+                        <span class="oc-match__note">Line 10, 20, 30 compared to the order</span>
+                    </span>
+                    <span class="oc-status oc-status--ok"><AppIcon Name="check" Size="13" /> Confirmed</span>
+                </div>
+
+                <div class="oc-match__row">
+                    <span class="oc-match__line">
+                        Quantity and delivery date
+                        <span class="oc-match__note">Deviation detected on line 40</span>
+                    </span>
+                    <span class="oc-status oc-status--warn"><AppIcon Name="alert" Size="13" /> Deviation</span>
+                </div>
+
+                <div class="oc-match__row">
+                    <span class="oc-match__line">
+                        Supplier confirmation
+                        <span class="oc-match__note">Clarification sent to the supplier</span>
+                    </span>
+                    <span class="oc-status oc-status--ok"><AppIcon Name="mail" Size="13" /> Followed up</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. How it works
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="oc-how">
+            <div>
+                <p class="eyebrow">How it works</p>
+                <h2 class="h2 mt-2">A workforce for instant clarity on order status</h2>
+                <p class="oc-how__body mt-4">
+                    POs are structured, but acknowledgments not so much. From PDFs to emails, our
+                    GBS workforce turns unstructured supplier replies into ERP-ready
+                    confirmations—fast, accurate, and touchless.
+                </p>
+            </div>
+
+            <div class="oc-media">
+                <a class="oc-media__play" href="/contact" aria-label="Talk to us about order confirmations">
+                    <AppIcon Name="arrow-right" Size="26" />
+                </a>
+                <span class="oc-media__caption">Order Confirmations with AI Agents</span>
+                <span class="oc-media__note">See how unstructured supplier replies become ERP-ready confirmations.</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Skills library
+   ========================================================================== *@
+<section class="section" id="oc-skills">
+    <div class="container">
+        <SectionHeading Eyebrow="Skills library"
+                       Title="GBS Skills to get every order confirmed"
+                       Description="Every skill below is pre-packaged and live in production. The complexity tag shows how much context a skill weighs before it posts an outcome." />
+
+        <div class="oc-skills mt-7">
+            @foreach (var skill in Skills)
+            {
+                <article class="oc-skill">
+                    <span class="oc-tag oc-tag--@skill.Complexity">@ComplexityLabel(skill.Complexity)</span>
+                    <h3 class="oc-skill__title">@skill.Title</h3>
+                    <p class="oc-skill__body">@skill.Body</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Closing CTA
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <div class="oc-cta">
+            <h2>Manage every purchase order with confidence</h2>
+
+            <div class="oc-cta__actions">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Book a walkthrough
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--on-dark btn--lg" href="/contact">Get in Touch</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Frequently Asked Questions
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container container--narrow">
+        <SectionHeading Eyebrow="Questions" Title="Frequently Asked Questions" Align="center" />
+        <FaqList Items="Questions" CssClass="mt-7" />
+    </div>
+</section>
+
+@code {
+    private sealed record Skill(string Title, string Body, string Complexity);
+
+    private static readonly Skill[] Skills =
+    [
+        new("Input Validation", "Check that everything is in order at the door. AI Agents flag errors before they disrupt downstream processes.", "low"),
+        new("Document Routing", "Send it where it belongs. AI Agents route documents to the right agent or escalate to a human operator.", "low"),
+        new("Document Classification", "Sort with intelligence. AI Agents identify document types at scale, no templates needed.", "low"),
+        new("Document Splitting", "AI Agents detect multi-doc files and auto-split into clean, process-ready pages according to internal business logic.", "medium"),
+        new("Information Extraction", "Find what matters, fast. AI Agents pull key data from any format with high accuracy and nothing unnecessary.", "medium"),
+        new("Document Translation", "Machine-translate image content into a target language while preserving layout and key fields. E.g. a Japanese document looks like an English document after transformation.", "medium"),
+        new("Duplicate Prevention", "No more double entries. AI Agents detect and block duplicates before they hurt your bottom-line.", "medium"),
+        new("PO Enrichment", "Match faster, with fewer errors. AI agents automate accuracy across every PO line.", "high"),
+        new("Supplier Master Enrichment", "Know your vendor, instantly. AI agents match every supplier record and enrich it with IDs, banking details, and key attributes.", "high"),
+        new("Company Master Enrichment", "Every transaction has one true owner. AI agents cut through attribution mess and assign the correct legal entity\u2014using ERP and MDM data.", "high"),
+        new("Supplier & Approver Communication", "No more chasing. AI agents send the right message to the right person at the right time\u2014keeping transactions moving even when unexpected bumps happen.", "high"),
+        new("Custom Master Data Enrichment", "Enrichment of a custom master data object from a source system. Record identification relies on structured master data. Master data is integrated with Polypus at an additional cost.", "high")
+    ];
+
+    private static readonly IReadOnlyList<Faq> Questions =
+    [
+        new Faq
+        {
+            Category = "Order Confirmations",
+            Question = "What does the Order Confirmations Workforce do?",
+            Answer = "The Polypus Order Confirmations Workforce reads supplier order confirmations, " +
+                     "matches them against the purchase order on price, quantity and dates, and gives " +
+                     "procurement clarity on which orders are confirmed as expected and which deviate."
+        },
+        new Faq
+        {
+            Category = "Order Confirmations",
+            Question = "Why automate order confirmations at all?",
+            Answer = "An unread confirmation hides a late or wrong delivery until it hurts your " +
+                     "process downstream. Processing every confirmation as it arrives surfaces " +
+                     "delivery risks early, while there is still time to react."
+        },
+        new Faq
+        {
+            Category = "Order Confirmations",
+            Question = "What happens when a confirmation deviates from the PO?",
+            Answer = "When the Workforce cannot resolve a deviation with the current business " +
+                     "knowledge, it escalates the case as an exception to the owner, with the reason " +
+                     "and the context needed to resolve it, including supplier communication where " +
+                     "follow-up is needed."
+        },
+        new Faq
+        {
+            Category = "Order Confirmations",
+            Question = "Does the workforce communicate with suppliers?",
+            Answer = "Yes. A dedicated Supplier & Approver Communication Skill handles clarifications " +
+                     "and follow-ups inside the process instead of in scattered channels."
+        },
+        new Faq
+        {
+            Category = "Order Confirmations",
+            Question = "What type of files can the Order Confirmations Workforce process?",
+            Answer = "Polypus reads order confirmations as images, PDFs, XML/JSON, or Word and Excel " +
+                     "files, however they arrive: by email, scan, vendor portal, client portal, or " +
+                     "internal system logs."
+        },
+        new Faq
+        {
+            Category = "Order Confirmations",
+            Question = "What is the cost of the Order Confirmations Workforce?",
+            Answer = "Calculating the cost of your Order Confirmations Workforce depends on the GBS " +
+                     "Skills deployed and how many times each GBS Skill is applied to process a " +
+                     "document. E.g.: if a document does not require matching against a PO, the PO " +
+                     "Matching skill does not get triggered, and therefore does not incur a cost. " +
+                     "You only pay for work done."
+        }
+    ];
+
+    private static string ComplexityLabel(string complexity) => complexity switch
+    {
+        "low" => "Low complexity",
+        "medium" => "Medium complexity",
+        "high" => "High complexity",
+        _ => complexity
+    };
+}

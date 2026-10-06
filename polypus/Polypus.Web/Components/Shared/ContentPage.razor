@@ -1,0 +1,94 @@
+@*
+    ContentPage.razor
+    ------------------------------------------------------------------------
+    Renders a page reached from the header (Workforce, Platform, Resources, ...).
+
+    Why a component
+      A dozen header destinations share one layout: a hero, then one or more
+      sections of titled cards, then optional questions, then a closing call to
+      action. Rendering that from a ContentPageModel keeps every page on the same
+      vertical rhythm and means a new destination is a catalog entry, not markup.
+
+    Parameters
+      * Page - the ContentPageModel describing everything on the page.
+
+    See Services/ContentPageCatalog.cs for the content of each destination.
+*@
+
+<PageTitle>@($"{Page.Title} - Polypus")</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@Page.MetaDescription" />
+</HeadContent>
+
+<PageHero Section="@Page.Section"
+          Eyebrow="@Page.Eyebrow"
+          Title="@Page.Title"
+          Lead="@Page.Lead"
+          Pills="@Page.Pills" />
+
+@foreach (var section in Page.Sections)
+{
+    <section class="section" id="@section.Id">
+        <div class="container">
+            @if (!string.IsNullOrWhiteSpace(section.Title))
+            {
+                <SectionHeading Eyebrow="@section.Eyebrow"
+                               Title="@section.Title"
+                               Description="@section.Description" />
+            }
+
+            <div class="@(section.Items.Count == 2 ? "grid-2" : "grid-3") mt-6">
+                @foreach (var item in section.Items)
+                {
+                    <article class="card card--hover">
+                        @if (!string.IsNullOrWhiteSpace(item.Icon))
+                        {
+                            <span class="card__icon"><AppIcon Name="@item.Icon" Size="20" /></span>
+                        }
+                        <h3 class="h4">@item.Title</h3>
+                        <p class="muted mb-0">@item.Body</p>
+                    </article>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@if (Page.Faqs.Count > 0)
+{
+    <section class="section section--paper-alt">
+        <div class="container container--narrow">
+            <SectionHeading Eyebrow="Questions" Title="Frequently Asked Questions" Align="center" />
+            <FaqList Items="Page.Faqs" CssClass="mt-7" />
+        </div>
+    </section>
+}
+
+<section class="section">
+    <div class="container">
+        <div class="cta">
+            <div>
+                <h2 class="h2">Ready to see it on your own documents?</h2>
+                <p>
+                    Send us a sample of the document type that gives your team the most trouble.
+                    We will show you exactly what the workforce reads, what it checks and what it
+                    would post.
+                </p>
+            </div>
+            <div class="cta__actions">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Book a walkthrough
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--ghost btn--lg" href="/help">Visit the Help Center</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>Everything shown on the page, supplied by ContentPageCatalog.</summary>
+    [Parameter, EditorRequired]
+    public ContentPageModel Page { get; set; } = default!;
+}

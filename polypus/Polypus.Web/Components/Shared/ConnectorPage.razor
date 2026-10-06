@@ -1,0 +1,271 @@
+@*
+    ConnectorPage.razor
+    ------------------------------------------------------------------------
+    Renders an ERP/AP connector page (SAP, Coupa, Workday, xSuite).
+
+    Why a component
+      Every connector page uses the same reference layout: a hero, a centred
+      "How it works" section of cards, a "Why choose" section of cards, a
+      security band and a closing CTA. Rendering that from a ConnectorPageModel
+      means a new connector page is a catalog entry, not markup.
+
+    Parameters
+      * Page - the ConnectorPageModel describing everything on the page.
+
+    See Services/ConnectorCatalog.cs for the content of each connector.
+    Styles are in wwwroot/app.css (.cn-* classes) because several pages share them.
+*@
+<PageTitle>@($"{Page.Title} - Polypus")</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@Page.MetaDescription" />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section cn-hero">
+    <div class="container">
+        <div class="cn-hero__inner">
+            <p class="eyebrow">@Page.Eyebrow</p>
+            <h1 class="display cn-hero__title">@Page.Title</h1>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. How it works
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="cn-head">
+            <h2 class="h2">How it works</h2>
+            <p class="lead cn-head__lead">@Page.HowItWorksLead</p>
+        </div>
+
+        @* Architecture diagram, replicating the reference connector diagram on a fixed
+           1080x600 canvas: API box wired to the partner logo, the outbound note list,
+           two master-data pills joined by elbow wires into the agent band, then the
+           extracted-data API box and bow-tie gateway into the inbound note list. *@
+        @{
+            var d = Page.Diagram;
+        }
+        <figure class="cn-diagram mt-7">
+            <div class="cn-diagram__canvas">
+                @* All connecting lines are one SVG so the elbows and arrowheads land exactly. *@
+                <svg class="cn-diagram__wires" viewBox="0 0 1080 600" aria-hidden="true">
+                    <defs>
+                        <marker id="cn-arrow" viewBox="0 0 8 8" refX="6.2" refY="4"
+                                markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                            <path class="cn-arrowhead" d="M1.2 1.2 L6.2 4 L1.2 6.8" />
+                        </marker>
+                    </defs>
+
+                    @* API box to the partner logo (arrow points back into the API box). *@
+                    <path d="M614 50 H856" marker-start="url(#cn-arrow)" />
+
+                    @* API box down, then out to each pill. *@
+                    <path d="M550 78 V116" />
+                    <path d="M550 116 H332 V164" marker-end="url(#cn-arrow)" />
+                    <path d="M550 116 H755 V164" marker-end="url(#cn-arrow)" />
+
+                    @* Each pill down, across, and into the agent band. *@
+                    <path d="M332 220 V250" />
+                    <path d="M755 220 V250" />
+                    <path d="M332 250 H755" />
+                    <path d="M543 250 V284" marker-end="url(#cn-arrow)" />
+
+                    @* Extracted-data API box across to the bow-tie gateway. *@
+                    <path d="M604 514 H850" marker-end="url(#cn-arrow)" />
+                </svg>
+
+                @* ---- Top API box ---- *@
+                <div class="cn-diagram__api cn-diagram__api--top">
+                    <AppIcon Name="api" Size="22" />
+                    <span>@d.ApiLabel</span>
+                </div>
+
+                @* ---- Partner lockup ---- *@
+                <div class="cn-diagram__partner">@Page.PartnerName</div>
+
+                @* ---- Outbound note list ---- *@
+                <div class="cn-diagram__notes cn-diagram__notes--out">
+                    <p class="cn-diagram__notes-title">@d.OutboundTitle</p>
+                    <ul>
+                        @foreach (var item in d.OutboundItems)
+                        {
+                            <li>@item</li>
+                        }
+                    </ul>
+                </div>
+
+                @* ---- Flow annotations ---- *@
+                <p class="cn-diagram__anno cn-diagram__anno--posting">@d.PostingLabel</p>
+                <p class="cn-diagram__anno cn-diagram__anno--master">
+                    @d.MasterSourceLabel<br />@d.MasterSourceSubLabel
+                </p>
+
+                @* ---- Master-data pills ---- *@
+                <div class="cn-diagram__pill cn-diagram__pill--context">
+                    <span class="cn-diagram__pill-icon"><AppIcon Name="database" Size="16" /></span>
+                    <span>@d.ContextPill</span>
+                </div>
+                <div class="cn-diagram__pill cn-diagram__pill--master">
+                    <span class="cn-diagram__pill-icon"><AppIcon Name="database" Size="16" /></span>
+                    <span>@d.MasterPill</span>
+                </div>
+
+                @* ---- Agent band ---- *@
+                <div class="cn-diagram__band">
+                    <span class="cn-diagram__band-chip">
+                        <AppIcon Name="sparkle" Size="15" />
+                        @d.AgentsTitle
+                    </span>
+
+                    <ul class="cn-diagram__agents">
+                        @foreach (var agent in d.Agents)
+                        {
+                            <li>@agent</li>
+                        }
+                    </ul>
+
+                    <p class="cn-diagram__output">@d.Output</p>
+                </div>
+
+                @* ---- Extracted-data API box ---- *@
+                <div class="cn-diagram__api cn-diagram__api--mid">
+                    <AppIcon Name="api" Size="22" />
+                    <span>@d.ApiLabel</span>
+                    <span class="cn-diagram__api-title">@d.ExtractedTitle</span>
+                </div>
+
+                @* ---- Flow label beside the bottom arrow ---- *@
+                <p class="cn-diagram__anno cn-diagram__anno--extracted">
+                    @d.ExtractedFlowLabel<br />@d.ExtractedFlowSubLabel
+                </p>
+
+                @* ---- Bow-tie gateway ---- *@
+                <span class="cn-diagram__bowtie" aria-hidden="true">
+                    <AppIcon Name="bowtie" Size="26" />
+                </span>
+
+                @* ---- Inbound note list ---- *@
+                <div class="cn-diagram__notes cn-diagram__notes--in">
+                    <p class="cn-diagram__notes-title">@d.InboundTitle</p>
+                    <ul>
+                        @foreach (var item in d.InboundItems)
+                        {
+                            <li>@item</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            <figcaption class="cn-diagram__caption">@d.Caption</figcaption>
+        </figure>
+
+        <div class="cn-grid">
+            @foreach (var card in Page.HowItWorks)
+            {
+                <article class="cn-card">
+                    <h3 class="cn-card__title">@card.Title</h3>
+                    <p class="cn-card__text">@card.Text</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Why choose
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <div class="cn-lockup">
+            <span class="cn-lockup__brand">Polypus</span>
+            <span class="cn-lockup__cross" aria-hidden="true">&times;</span>
+            <span class="cn-lockup__brand">@Page.PartnerName</span>
+        </div>
+
+        <div class="cn-head">
+            <h2 class="h2">@Page.WhyTitle</h2>
+            @if (!string.IsNullOrWhiteSpace(Page.WhyLead))
+            {
+                <p class="lead cn-head__lead">@Page.WhyLead</p>
+            }
+        </div>
+
+        <div class="cn-grid">
+            @foreach (var card in Page.WhyChoose)
+            {
+                <article class="cn-card">
+                    <h3 class="cn-card__title">@card.Title</h3>
+                    <p class="cn-card__text">@card.Text</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Secure and compliant
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="cn-secure">
+            <h2 class="h2">Secure and Compliant</h2>
+            <p class="cn-secure__text">
+                Polypus maintains ISO 27001 certification, SOC 2 Type II attestation, is HIPAA,
+                GDPR and CCPA-compliant, and our cloud services have a STAR Level 1 Registry.
+            </p>
+
+            @* Security illustration: a shield with the certification badges around it. *@
+            <div class="cn-shield" aria-hidden="true">
+                <div class="cn-shield__core">
+                    <AppIcon Name="shield-check" Size="42" />
+                </div>
+                <div class="cn-shield__badges">
+                    @foreach (var certification in Page.Certifications)
+                    {
+                        <span class="cn-shield__badge">@certification</span>
+                    }
+                </div>
+            </div>
+
+            <div class="cn-secure__actions">
+                <a class="btn btn--primary" href="/security">
+                    @Page.TrustLabel
+                    <AppIcon Name="arrow-right" Size="16" />
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Closing CTA
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <div class="cn-cta" id="cta">
+            <div>
+                <h2>@Page.CtaTitle</h2>
+                <p>@Page.CtaCopy</p>
+            </div>
+
+            <div class="cn-cta__actions">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Book a walkthrough
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--on-dark btn--lg" href="/contact">Get in Touch</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>Everything shown on the page, supplied by ConnectorCatalog.</summary>
+    [Parameter, EditorRequired]
+    public ConnectorPageModel Page { get; set; } = default!;
+}

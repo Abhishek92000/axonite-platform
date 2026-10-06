@@ -1,0 +1,354 @@
+/* ============================================================================
+   Polypus - Platform.razor.css
+   ----------------------------------------------------------------------------
+   Scoped styles for /platform. Mirrors the reference page structure (hero,
+   six platform capabilities, the four levers tab set, security band, model
+   strip, closing CTA) using the Polypus design tokens from app.css.
+
+   Sections:
+     1. Hero
+     2. Platform capabilities
+     3. Four levers and tabs
+     4. Security band
+     5. Model strip
+     6. Closing CTA
+     7. Responsive
+   ========================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Hero
+   --------------------------------------------------------------------------- */
+.pf-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--s-8) var(--s-9);
+    border-top: 0;
+}
+
+.pf-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(60rem 30rem at 88% -12%, rgba(15, 118, 110, 0.11), transparent 60%),
+        radial-gradient(40rem 24rem at 6% 0%, rgba(198, 158, 78, 0.1), transparent 62%);
+    pointer-events: none;
+}
+
+.pf-hero .container { position: relative; }
+
+.pf-hero__inner { max-width: 60ch; }
+
+.pf-hero__title { max-width: 17ch; }
+
+.pf-hero__copy {
+    margin-top: var(--s-5);
+    max-width: 64ch;
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Platform capabilities
+   --------------------------------------------------------------------------- */
+.pf-capabilities {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-5);
+}
+
+.pf-capability {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.pf-capability:hover {
+    border-color: #d3cec4;
+    box-shadow: var(--sh-2);
+    transform: translateY(-2px);
+}
+
+.pf-capability__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: var(--s-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    color: var(--accent);
+}
+
+.pf-capability__title {
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.pf-capability__copy {
+    margin: 0;
+    color: var(--ink-3);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------------------
+   3. Four levers and tabs
+   --------------------------------------------------------------------------- */
+.pf-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: var(--s-6);
+}
+
+.pf-tab {
+    padding: 0.55rem 1.05rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-full);
+    background: var(--white);
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.pf-tab:hover { border-color: var(--accent); color: var(--ink); }
+
+.pf-tab[aria-selected="true"] {
+    border-color: transparent;
+    background: var(--accent);
+    color: #fff;
+}
+
+.pf-pane {
+    margin-top: var(--s-6);
+    padding: var(--s-7);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: linear-gradient(160deg, var(--paper-alt), var(--white));
+}
+
+.pf-pane__title {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+}
+
+.pf-pane__text {
+    margin-top: 0.6rem;
+    max-width: 66ch;
+    color: var(--ink-2);
+    line-height: 1.65;
+}
+
+.pf-checks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 1.4rem;
+    margin: var(--s-5) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pf-checks li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    color: var(--ink-2);
+    font-size: 0.925rem;
+}
+
+.pf-checks svg { color: var(--accent); flex: none; margin-top: 2px; }
+
+/* Feature cards inside a pane (AI Agent Studio, Integrations) */
+.pf-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-5);
+    margin-top: var(--s-6);
+}
+
+.pf-feature {
+    padding: var(--s-5) var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+}
+
+.pf-feature__tag {
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--r-full);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.pf-feature__title {
+    margin-bottom: 0.7rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.pf-feature .pf-checks {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Security band
+   --------------------------------------------------------------------------- */
+.pf-security {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: var(--s-8);
+    align-items: center;
+    padding: var(--s-8);
+    border-radius: var(--r-md);
+    background: var(--dark);
+    color: var(--ink-inverse-2);
+}
+
+.pf-security h2 {
+    color: var(--ink-inverse);
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+    letter-spacing: -0.015em;
+}
+
+.pf-security p {
+    margin-top: 0.8rem;
+    max-width: 58ch;
+    line-height: 1.7;
+}
+
+.pf-security__action { margin-top: var(--s-6); }
+
+.pf-security__badges {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.pf-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.85rem 0.75rem;
+    border: 1px solid var(--line-dark);
+    border-radius: var(--r-sm);
+    background: var(--dark-2);
+    color: var(--ink-inverse);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.pf-badge svg { color: var(--accent-bright); flex: none; }
+
+/* ---------------------------------------------------------------------------
+   5. Model strip
+   --------------------------------------------------------------------------- */
+.pf-models {
+    display: grid;
+    gap: var(--s-6);
+    justify-items: center;
+    text-align: center;
+}
+
+.pf-models__title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.4rem, 1.1rem + 1vw, 1.8rem);
+    letter-spacing: -0.01em;
+}
+
+.pf-models__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.pf-model {
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-full);
+    background: var(--white);
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: var(--sh-1);
+}
+
+/* ---------------------------------------------------------------------------
+   6. Closing CTA
+   --------------------------------------------------------------------------- */
+.pf-cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-7);
+    align-items: center;
+    padding: var(--s-8);
+    border-radius: var(--r-md);
+    background: var(--dark-2);
+    color: var(--ink-inverse-2);
+}
+
+.pf-cta h2 {
+    max-width: 24ch;
+    color: var(--ink-inverse);
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+    letter-spacing: -0.015em;
+}
+
+.pf-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    justify-self: end;
+}
+
+/* ---------------------------------------------------------------------------
+   7. Responsive
+   --------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+    .pf-capabilities { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .pf-security,
+    .pf-cta { grid-template-columns: minmax(0, 1fr); }
+
+    .pf-cta__actions { justify-self: start; }
+
+    .pf-features { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 720px) {
+    .pf-capabilities { grid-template-columns: minmax(0, 1fr); }
+
+    .pf-checks { grid-template-columns: minmax(0, 1fr); }
+
+    .pf-security__badges { grid-template-columns: minmax(0, 1fr); }
+
+    .pf-security,
+    .pf-cta { padding: var(--s-7) var(--s-6); }
+
+    .pf-cta__actions,
+    .pf-cta__actions .btn { width: 100%; }
+}

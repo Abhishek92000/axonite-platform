@@ -1,0 +1,108 @@
+@page "/cookie-policy"
+@*
+    CookiePolicy.razor  -  route /cookie-policy
+    ------------------------------------------------------------------------
+    Cookie Policy. Structure comes from Components/Shared/LegalDocument.razor.
+
+    The important design note: this site ships exactly ZERO non-essential
+    cookies. There is no analytics tag, no advertising pixel and no third-party
+    script. That is why there is no cookie consent banner - there is nothing to
+    consent to. If you later add analytics, add the banner at the same time and
+    update this page.
+
+    Linked from: the footer meta row and the footer "Legal" column.
+*@
+
+<PageTitle>Polypus Cookie Policy</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="The cookies and similar technologies used on the Polypus website: strictly necessary session cookies only, with no analytics or advertising tracking." />
+</HeadContent>
+
+<PageHero Section="Cookie Policy"
+          Eyebrow="Legal"
+          Title="Cookie Policy"
+          Lead="This site sets only the cookies it needs to work. There is no analytics, no advertising tracking and no third-party script, which is why you have not seen a consent banner." />
+
+<section class="section section--flush">
+    <div class="container container--narrow">
+        <div class="card mb-6">
+            <h2 class="h4">The short version</h2>
+            <ul class="check-list mt-4">
+                <li>
+                    <AppIcon Name="check" Size="16" />
+                    <span>No advertising cookies, and none are planned.</span>
+                </li>
+                <li>
+                    <AppIcon Name="check" Size="16" />
+                    <span>No third-party analytics. We do not use Google Analytics or an equivalent.</span>
+                </li>
+                <li>
+                    <AppIcon Name="check" Size="16" />
+                    <span>One strictly necessary cookie, set by the framework, to protect form submissions against cross-site request forgery.</span>
+                </li>
+                <li>
+                    <AppIcon Name="check" Size="16" />
+                    <span>No font or script CDN requests, so no third party sees your visitors' IP addresses through this site.</span>
+                </li>
+            </ul>
+        </div>
+
+        <LegalDocument Updated="12 June 2025" Intro="@Intro" Sections="_sections" />
+    </div>
+</section>
+
+@code {
+    private const string Intro =
+        "Cookies are small files a site stores in your browser. Some are essential - without them " +
+        "forms cannot be submitted safely - and some are used for measurement or advertising. This " +
+        "site uses only the essential kind.";
+
+    private static readonly IReadOnlyList<LegalSection> _sections =
+    [
+        new LegalSection("what-we-set", "Cookies we set",
+        [
+            "The site sets one strictly necessary cookie while you are on the contact page. It is required by the framework's anti-forgery protection and cannot be disabled without breaking form submission."
+        ])
+        {
+            Bullets =
+            [
+                ".AspNetCore.Antiforgery.* - strictly necessary, session lifetime, same-site strict. Protects the contact form against cross-site request forgery. No personal data, no tracking.",
+                ".AspNetCore.Session / connection cookies - strictly necessary and only created when a page uses an interactive component, such as the header menu, the price toggle or the contact form."
+            ],
+            Note = "Strictly necessary cookies do not require consent under the ePrivacy Directive, which is why no consent banner is shown."
+        },
+
+        new LegalSection("what-we-dont-set", "What we deliberately do not use",
+        [
+            "We made a product decision to ship this site with no third-party dependencies. Nothing on the page loads from a CDN, and no script sends data to anyone other than the server you requested."
+        ])
+        {
+            Bullets =
+            [
+                "No advertising or retargeting pixels",
+                "No analytics or session-recording tools",
+                "No social media embed scripts (social links are plain links, not embedded widgets)",
+                "No hosted web fonts - the typefaces are declared as system font stacks",
+                "No third-party icon libraries - icons are inline SVG"
+            ]
+        },
+
+        new LegalSection("analytics", "Measurement",
+        [
+            "We do not measure individual visitors on this site. Aggregate operational metrics such as request counts and error rates are collected in our own infrastructure logs for security and capacity purposes, not through a browser cookie or a third-party tool.",
+            "If we introduce measurement in future, we will use a privacy-preserving approach, add a consent mechanism first, and update this page before any data is collected."
+        ]),
+
+        new LegalSection("managing-cookies", "Managing cookies in your browser",
+        [
+            "You can block or delete cookies in your browser settings. Blocking the anti-forgery cookie will prevent the contact form from submitting, because the server will reject the request as unverified."
+        ]),
+
+        new LegalSection("more-information", "Where to read more",
+        [
+            "Our Privacy Policy describes the personal data we process and your rights. The Data Processing Addendum covers the contents of customer documents. Questions about cookies or tracking can go to privacy@axonite.io."
+        ])
+    ];
+}

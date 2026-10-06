@@ -1,0 +1,10 @@
+{
+  "name": "polypus-deck-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build-time generators for the Polypus architecture deck. Not part of the website.",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "pptxgenjs": "4.0.1"
+  }
+}

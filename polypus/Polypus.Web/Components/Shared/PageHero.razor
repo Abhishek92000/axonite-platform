@@ -1,0 +1,76 @@
+@*
+    PageHero.razor
+    ------------------------------------------------------------------------
+    The compact banner at the top of every page except the home page: breadcrumb,
+    eyebrow label, title, lead paragraph and optional chip row.
+
+    Why it exists
+      Twelve pages would otherwise repeat the same wrapper markup, and small
+      inconsistencies would creep in. This keeps the vertical rhythm identical
+      everywhere.
+
+    Usage
+      <PageHero Section="Plans" Eyebrow="Pricing" Title="..." Lead="..." />
+*@
+
+<section class="section page-hero">
+    <div class="container">
+        <div class="page-hero__inner">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span aria-hidden="true">/</span>
+                <span>@Section</span>
+            </nav>
+
+            @if (!string.IsNullOrWhiteSpace(Eyebrow))
+            {
+                <p class="eyebrow">@Eyebrow</p>
+            }
+
+            <h1 class="display">@Title</h1>
+
+            @if (!string.IsNullOrWhiteSpace(Lead))
+            {
+                <p class="lead">@Lead</p>
+            }
+
+            @if (Pills.Count > 0)
+            {
+                <div class="page-hero__meta">
+                    @foreach (var pill in Pills)
+                    {
+                        <span class="pill">@pill</span>
+                    }
+                </div>
+            }
+
+            @ChildContent
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>Text shown as the last breadcrumb crumb.</summary>
+    [Parameter, EditorRequired]
+    public string Section { get; set; } = string.Empty;
+
+    /// <summary>Small uppercase label above the title.</summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    /// <summary>Page title, rendered as the single h1.</summary>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>Supporting paragraph.</summary>
+    [Parameter]
+    public string? Lead { get; set; }
+
+    /// <summary>Small labels shown under the lead.</summary>
+    [Parameter]
+    public IReadOnlyList<string> Pills { get; set; } = [];
+
+    /// <summary>Optional extra content, e.g. a billing-cycle toggle.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

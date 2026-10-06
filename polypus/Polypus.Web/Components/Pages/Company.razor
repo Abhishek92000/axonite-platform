@@ -1,0 +1,161 @@
+@page "/company"
+@*
+    Company.razor  -  route /company
+    ------------------------------------------------------------------------
+    About Axonite, the company that owns Polypus: the story, the founder
+    statement, the numbers, the offices and the ways to reach the team.
+
+    All content comes from Models/CompanyProfile.cs, which is also what the
+    home page company section renders. Edit the profile and both pages follow.
+
+    Linked from: the header, the footer "Company" column, and the home page.
+*@
+
+<PageTitle>About Axonite - the company behind Polypus</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@CompanyProfile.ShortAbout" />
+</HeadContent>
+
+<PageHero Section="Company"
+          Eyebrow="About us"
+          Title="@CompanyProfile.Name"
+          Lead="@CompanyProfile.Tagline"
+          Pills="_pills" />
+
+<section class="section section--flush">
+    <div class="container">
+        <div class="company">
+            <div class="company__story">
+                <h2 class="h3">Why we built Polypus</h2>
+
+                @foreach (var paragraph in CompanyProfile.Story)
+                {
+                    <p class="muted">@paragraph</p>
+                }
+
+                <figure class="founder-card mt-4">
+                    <blockquote>@CompanyProfile.FounderQuote</blockquote>
+                    <figcaption>
+                        <span class="avatar" aria-hidden="true">AM</span>
+                        <span>
+                            <span class="founder__name">@CompanyProfile.FounderName</span>
+                            <span class="founder__role">@CompanyProfile.FounderRole</span>
+                        </span>
+                    </figcaption>
+                </figure>
+            </div>
+
+            <div>
+                <div class="company__facts">
+                    @foreach (var fact in CompanyProfile.Facts)
+                    {
+                        <div class="fact">
+                            <div class="fact__value">@fact.Value</div>
+                            <div class="fact__label">@fact.Label</div>
+                        </div>
+                    }
+                </div>
+
+                <div class="office-list mt-6">
+                    @foreach (var office in CompanyProfile.Offices)
+                    {
+                        <div class="office">
+                            <div>
+                                <span class="office__city">@office.City</span>
+                                <span class="office__country">@office.Country</span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(office.Address))
+                            {
+                                <p class="office__address">@office.Address</p>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(office.Role))
+                            {
+                                <p class="office__role">@office.Role</p>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="aside-panel mt-6">
+                    <h3 class="h4">How we work with customers</h3>
+                    <ol class="aside-steps">
+                        <li>Shadow mode first - we measure accuracy against your own historical documents before anything posts.</li>
+                        <li>Named engineers. The people who build the pipeline are the people you call.</li>
+                        <li>Every release can be replayed against historical runs, so upgrades are boring.</li>
+                        <li>Quarterly reviews on Business and Enterprise, with the numbers you report upwards.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="Reach us"
+                       Title="Contact details and offices"
+                       Description="Commercial questions go to the sales address, production issues to support. Both are monitored by humans during support hours." />
+
+        <div class="grid-3 mt-6">
+            <div class="aside-panel">
+                <span class="card__icon"><AppIcon Name="mail" Size="20" /></span>
+                <h3 class="h4">Sales</h3>
+                <p class="mb-0">
+                    <a href="mailto:@CompanyProfile.SalesEmail">@CompanyProfile.SalesEmail</a>
+                </p>
+                <p class="text-sm muted mb-0">Pricing, sizing, security pack, contract questions.</p>
+            </div>
+
+            <div class="aside-panel">
+                <span class="card__icon"><AppIcon Name="headset" Size="20" /></span>
+                <h3 class="h4">Support</h3>
+                <p class="mb-0">
+                    <a href="mailto:@CompanyProfile.SupportEmail">@CompanyProfile.SupportEmail</a>
+                </p>
+                <p class="text-sm muted mb-0">@CompanyProfile.SupportHours</p>
+            </div>
+
+            <div class="aside-panel">
+                <span class="card__icon"><AppIcon Name="phone" Size="20" /></span>
+                <h3 class="h4">Phone</h3>
+                <p class="mb-0">@CompanyProfile.Phone</p>
+                <p class="text-sm muted mb-0">Weekdays, 09:00 - 21:00 IST</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <SectionHeading Eyebrow="Customers"
+                       Title="What our customers say"
+                       Align="center" />
+
+        <div class="quotes mt-7">
+            <QuoteCard Testimonial="TestimonialCatalog.Featured" />
+
+            <div class="quote-grid">
+                @foreach (var quote in TestimonialCatalog.Others.Take(2))
+                {
+                    <QuoteCard Testimonial="quote" />
+                }
+            </div>
+        </div>
+
+        <div class="plans__toolbar plans__toolbar--center mt-6">
+            <a class="link-arrow" href="/careers">
+                We are hiring across engineering and delivery
+                <AppIcon Name="arrow-right" Size="16" />
+            </a>
+        </div>
+    </div>
+</section>
+
+@code {
+    private static readonly IReadOnlyList<string> _pills =
+    [
+        CompanyProfile.LegalName,
+        CompanyProfile.RegistrationNote
+    ];
+}

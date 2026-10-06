@@ -1,0 +1,118 @@
+@*
+    PlanCard.razor
+    ------------------------------------------------------------------------
+    A single pricing card. Used in two places:
+      * Home page  - the four-card preview under "Plans"
+      * /plans     - the full pricing page
+
+    The whole point of this component is the call to action. Clicking the
+    button navigates to:
+
+        /contact?plan={Plan.Id}
+
+    /contact reads that query string in its [SupplyParameterFromQuery] property
+    and pre-selects the plan, shows a plan summary panel beside the form, and
+    carries the plan into the submitted email. That is the "click a plan and
+    land on the contact page with the plan details" behaviour.
+
+    Parameters
+      * Plan    - the plan to render (see Models/Plan.cs and Services/PlanCatalog.cs)
+      * Cycle   - which price to show. Bound two-way so the toggle in the parent
+                  can flip every card at once.
+
+    How to change something
+      * Prices/copy  -> Services/PlanCatalog.cs
+      * Layout/order -> the .plan-* rules in wwwroot/home.css
+*@
+
+<article class="plan-card @(Plan.IsPopular ? "plan-card--popular" : null)">
+    @if (!string.IsNullOrWhiteSpace(Plan.Badge))
+    {
+        <span class="plan-card__badge">@Plan.Badge</span>
+    }
+
+    <header class="plan-card__head">
+        <h3 class="plan-card__name">@Plan.Name</h3>
+        <p class="plan-card__tagline">@Plan.Tagline</p>
+
+        <div class="plan-card__price">
+            @if (Plan.CustomPriceLabel is not null)
+            {
+                <span class="plan-card__amount">@Plan.CustomPriceLabel</span>
+            }
+            else
+            {
+                <span class="plan-card__amount">@CurrentPrice</span>
+                <span class="plan-card__cycle">/ month</span>
+            }
+        </div>
+
+        <p class="plan-card__note">
+            @if (Cycle == BillingCycle.Annual && Plan.CustomPriceLabel is null)
+            {
+                @:billed annually &middot; @Plan.PriceNote
+            }
+            else
+            {
+                @Plan.PriceNote
+            }
+        </p>
+    </header>
+
+    <div class="plan-card__facts">
+        <div>
+            <AppIcon Name="layers" Size="16" />
+            <span>@Plan.DocumentsPerMonth</span>
+        </div>
+        <div>
+            <AppIcon Name="building" Size="16" />
+            <span>@Plan.BestFor</span>
+        </div>
+    </div>
+
+    <ul class="plan-card__includes">
+        @foreach (var item in Plan.Includes)
+        {
+            <li>
+                <AppIcon Name="check" Size="16" />
+                <span>@item</span>
+            </li>
+        }
+    </ul>
+
+    <div class="plan-card__foot">
+        @*
+            An <a> is used instead of a <button> so the destination is a real,
+            shareable URL. The query string is what carries the plan across.
+        *@
+        <a class="btn @(Plan.IsPopular ? "btn--primary" : "btn--ghost") btn--block"
+           href="@ContactHref"
+           aria-label="@($"{Plan.CtaLabel} - continue to the contact form with the {Plan.Name} plan selected")">
+            @Plan.CtaLabel
+            <AppIcon Name="arrow-right" Size="16" />
+        </a>
+        <p class="plan-card__cta-note">@Plan.CtaNote</p>
+    </div>
+</article>
+
+@code {
+    /// <summary>The plan to render.</summary>
+    [Parameter, EditorRequired]
+    public Plan Plan { get; set; } = default!;
+
+    /// <summary>Which price to show. Two-way bound so a parent toggle can flip all cards.</summary>
+    [Parameter]
+    public BillingCycle Cycle { get; set; } = BillingCycle.Monthly;
+
+    [Parameter]
+    public EventCallback<BillingCycle> CycleChanged { get; set; }
+
+    /// <summary>Price for the currently selected billing cycle.</summary>
+    private string CurrentPrice =>
+        Cycle == BillingCycle.Annual && Plan.AnnualPrice is not null
+            ? Plan.AnnualPrice
+            : Plan.MonthlyPrice ?? Plan.CustomPriceLabel ?? "Custom";
+
+    /// <summary>The deep link that jumps straight to the contact page for this plan.</summary>
+    private string ContactHref => $"/contact?plan={Uri.EscapeDataString(Plan.Id)}";
+}

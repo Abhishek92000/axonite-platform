@@ -1,0 +1,211 @@
+@page "/workforce/order-management"
+@rendermode InteractiveServer
+@*
+    OrderManagement.razor - route /workforce/order-management
+    ------------------------------------------------------------------------
+    A faithful build of the reference Order Management page, using Polypus
+    branding:
+
+      1. Hero "Capture all new business. Do 0% manual work." with a Start Now
+         button
+      2. How it works - the sales-order-consistency narrative beside a media
+         panel
+      3. GBS Skills for smooth order management - all 14 skills from the
+         reference, each tagged Low / Medium / High complexity
+      4. Closing CTA "Manage every sales order with speed"
+      5. The six reference questions, using the shared FaqList accordion
+
+    Copy is carried verbatim from the reference; only the brand name is swapped
+    (Hypatos -> Polypus). Styles live in OrderManagement.razor.css and use the
+    Polypus design tokens, so nothing here copies the reference theme.
+
+    Linked from: the /workforce bundle grid.
+*@
+
+<PageTitle>Order Management - Polypus Workforce</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="A workforce validating sales orders against catalogue, pricing and volume rules, then creating clean orders in your ERP." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section om-hero">
+    <div class="container">
+        <div class="om-hero__inner">
+            <p class="eyebrow">The GBS Workforce for Order Management</p>
+            <h1 class="display om-hero__title">Capture all new business. Do 0% <em>manual work.</em></h1>
+
+            <div class="om-hero__action">
+                <a class="btn btn--primary btn--lg" href="#om-skills">
+                    Start Now
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. How it works
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="om-how">
+            <div>
+                <p class="eyebrow">How it works</p>
+                <h2 class="h2 mt-2">A workforce for sales order consistency – peak season or slow</h2>
+                <p class="om-how__body mt-4">
+                    Orders come in from email, portals, EDI, and more. Agents identify, classify, and
+                    match each to the latest catalogue, even with typos or outdated codes, then
+                    decide how to route it using data from every connected system. You update the
+                    logic in plain language, and track match accuracy and fallout in real time.
+                </p>
+            </div>
+
+            <div class="om-media">
+                <a class="om-media__play" href="#om-skills" aria-label="See how order management works">
+                    <AppIcon Name="arrow-right" Size="26" />
+                </a>
+                <span class="om-media__caption">Order Management with AI Agents</span>
+                <span class="om-media__note">Watch unmatched orders become clean, routed sales orders.</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Skills library
+   ========================================================================== *@
+<section class="section" id="om-skills">
+    <div class="container">
+        <SectionHeading Eyebrow="Skills library"
+                       Title="GBS Skills for smooth order management"
+                       Description="Every skill below is pre-packaged and live in production. The complexity tag shows how much context a skill weighs before it posts an outcome." />
+
+        <div class="om-skills mt-7">
+            @foreach (var skill in Skills)
+            {
+                <article class="om-skill">
+                    <span class="om-tag om-tag--@skill.Complexity">@ComplexityLabel(skill.Complexity)</span>
+                    <h3 class="om-skill__title">@skill.Title</h3>
+                    <p class="om-skill__body">@skill.Body</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Closing CTA
+   ========================================================================== *@
+<section class="section" id="om-cta">
+    <div class="container">
+        <div class="om-cta">
+            <h2>Manage every sales order <em>with speed</em></h2>
+
+            <div class="om-cta__actions">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Book a walkthrough
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--on-dark btn--lg" href="/contact">Get in Touch</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Frequently Asked Questions
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container container--narrow">
+        <SectionHeading Eyebrow="Questions" Title="Frequently Asked Questions" Align="center" />
+        <FaqList Items="Questions" CssClass="mt-7" />
+    </div>
+</section>
+
+@code {
+    private sealed record Skill(string Title, string Body, string Complexity);
+
+    private static readonly Skill[] Skills =
+    [
+        new("Input Validation", "Check that everything is in order at the door. AI Agents flag errors before they disrupt downstream processes.", "low"),
+        new("Document Routing", "Send it where it belongs. AI Agents route documents to the right agent or escalate to a human operator.", "low"),
+        new("Document Classification", "Sort with intelligence. AI Agents identify document types at scale, no templates needed.", "low"),
+        new("Document Splitting", "AI Agents detect multi-doc files and auto-split into clean, process-ready pages according to internal business logic.", "medium"),
+        new("Information Extraction", "Find what matters, fast. AI Agents pull key data from any format with high accuracy and nothing unnecessary.", "medium"),
+        new("Document Translation", "Machine-translate image content into a target language while preserving layout and key fields. E.g. a Japanese document looks like an English document after transformation.", "medium"),
+        new("Duplicate Prevention", "No more double entries. AI Agents detect and block duplicates before they hurt your bottom-line.", "medium"),
+        new("Shipping Address Enrichment", "Ship with certainty. AI agents remove the stress of guesswork by matching and enriching every ship-to record at header and line level — automatically.", "high"),
+        new("Responsibility Determination", "Every item finds its owner. AI agents assign the right team, person, region, or queue — based on account, channel, and SLA rules.", "high"),
+        new("Customer Master Enrichment", "Know your customer, instantly. AI Agents unify and reconcile account records across systems.", "high"),
+        new("Reference Sales Document Enrichment", "Make every quote count. AI agents identify and enrich quotes, contracts, and sales orders - extracting data, filling gaps, and giving your team what they need to close faster.", "high"),
+        new("Product Matching", "No surprises in sales. AI Agents validate every order with the latest product or material master data.", "high"),
+        new("Custom Master Data Enrichment", "Enrichment of a custom master data object from a source system. Record identification relies on structured master data. Master data is integrated with Polypus at an additional cost.", "high"),
+        new("Input Sorting", "Analyzes incoming files and emails to group related documents into cases for business transactions. Replaces manual sorting, ensuring cases are pre-organized for processing.", "high")
+    ];
+
+    private static readonly IReadOnlyList<Faq> Questions =
+    [
+        new Faq
+        {
+            Category = "Order Management",
+            Question = "What does the Order Management Workforce do?",
+            Answer = "The Polypus order management workforce captures incoming sales orders, validates " +
+                     "them against catalogue, pricing and volume rules, routes exceptions to the " +
+                     "right owner and creates clean orders in your ERP."
+        },
+        new Faq
+        {
+            Category = "Order Management",
+            Question = "What gets validated on every order?",
+            Answer = "Product references against the catalogue, prices against agreements, " +
+                     "quantities against expected volumes, and customer data against your master " +
+                     "records. Deviations become specific exceptions rather than downstream " +
+                     "surprises."
+        },
+        new Faq
+        {
+            Category = "Order Management",
+            Question = "How does the Order Management Workforce cope with seasonal peaks?",
+            Answer = "The Order Management Workforce is designed for both peak season and quiet " +
+                     "periods: it scales with order volume rather than depending on manual capacity."
+        },
+        new Faq
+        {
+            Category = "Order Management",
+            Question = "Can it handle orders arriving as documents?",
+            Answer = "Yes. Orders arriving as documents are captured, classified and extracted with " +
+                     "the same document skills, then validated and routed like any other order."
+        },
+        new Faq
+        {
+            Category = "Order Management",
+            Question = "What type of files can the Order Management Workforce process?",
+            Answer = "Polypus processes sales orders in any format — image, PDF, XML/JSON, Word, or " +
+                     "Excel — regardless of whether they come in by email, scan, e-commerce portal, " +
+                     "or API."
+        },
+        new Faq
+        {
+            Category = "Order Management",
+            Question = "What is the cost of the Order Management Workforce?",
+            Answer = "Cost is based on which Skills your Order Management Workforce uses, and how " +
+                     "often each one is triggered — you only pay when a Skill is applied. E.g.: the " +
+                     "Duplicate Prevention skill incurs a cost only when a duplicate order is caught " +
+                     "(the same order arriving by email and again via marketplace); if no duplicate " +
+                     "exists, that Skill isn't triggered."
+        }
+    ];
+
+    private static string ComplexityLabel(string complexity) => complexity switch
+    {
+        "low" => "Low complexity",
+        "medium" => "Medium complexity",
+        "high" => "High complexity",
+        _ => complexity
+    };
+}
+

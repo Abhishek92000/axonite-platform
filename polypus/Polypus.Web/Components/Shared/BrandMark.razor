@@ -1,0 +1,60 @@
+@*
+    BrandMark.razor
+    ------------------------------------------------------------------------
+    The Polypus logo mark, drawn inline so it inherits page styling and needs
+    no image request.
+
+    The mark is a single continuous stroke: a document stack on the right and
+    an arm that reaches down and curves into a node - the visual shorthand for
+    "documents in, controlled postings out".
+
+    Where it is used
+      * Components/Layout/Header.razor  (top left of every page)
+      * Components/Layout/Footer.razor  (footer brand block)
+      * as the favicon via wwwroot/favicon.svg (same shape, simplified)
+
+    How to change it
+      * Colours come from the two parameters. On a dark background pass
+        Plate="transparent" and Stroke="var(--accent-bright)".
+      * Set Decorative="true" when the mark sits next to visible "Polypus"
+        text so screen readers do not announce it twice.
+*@
+
+<svg class="brand__mark"
+     xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 40 40"
+     width="@Size"
+     height="@Size"
+     role="@(Decorative ? "presentation" : "img")"
+     aria-label="@(Decorative ? null : "Polypus")"
+     aria-hidden="@(Decorative ? "true" : null)">
+    <rect x="0" y="0" width="40" height="40" rx="11" fill="@Plate" />
+    <g fill="none" stroke="@Stroke" stroke-width="2.6" stroke-linecap="round">
+        <path d="M11 13.5c0-3 2.4-5.5 5.4-5.5h5.2c3 0 5.4 2.5 5.4 5.5v3c0 3-2.4 5.4-5.4 5.4h-5.2" />
+        <path d="M11 13.5v13.2" />
+        <path d="M11 20.6h5.4c2.6 0 4.7 2.1 4.7 4.7v2.1" />
+    </g>
+    <circle cx="11" cy="30.4" r="2.5" fill="@Node" />
+</svg>
+
+@code {
+    /// <summary>Rendered width and height in pixels.</summary>
+    [Parameter]
+    public int Size { get; set; } = 36;
+
+    /// <summary>Background of the rounded plate behind the mark.</summary>
+    [Parameter]
+    public string Plate { get; set; } = "#0d1017";
+
+    /// <summary>Colour of the arm stroke.</summary>
+    [Parameter]
+    public string Stroke { get; set; } = "#14b8a6";
+
+    /// <summary>Colour of the terminal node dot.</summary>
+    [Parameter]
+    public string Node { get; set; } = "#14b8a6";
+
+    /// <summary>Hide from assistive technology when the brand name is already visible.</summary>
+    [Parameter]
+    public bool Decorative { get; set; } = true;
+}

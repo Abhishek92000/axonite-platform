@@ -1,0 +1,145 @@
+@page "/product"
+@*
+    Product.razor  -  route /product
+    ------------------------------------------------------------------------
+    Product overview. The long version of the home page hero: what Polypus is,
+    what problem it solves, the four-step pipeline, the document types it reads,
+    and where it sits in an SAP landscape.
+
+    Linked from the footer "Product" column.
+*@
+
+<PageTitle>Polypus product overview - intelligent document processing for SAP</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@ProductProfile.MetaDescription" />
+</HeadContent>
+
+<PageHero Section="Product overview"
+          Eyebrow="The product"
+          Title="@ProductProfile.HeroHeadline"
+          Pills="_pills" />
+
+<section class="section section--flush">
+    <div class="container">
+        <div class="grid-2">
+            <div>
+                <h2 class="h3">The problem, in one paragraph</h2>
+                <p class="muted">
+                    Most finance teams have already tried to automate invoice processing at least once.
+                    The pilot looks impressive, then a supplier changes their layout, a credit note
+                    arrives as a photograph, and someone re-keys it by hand. Six months later the
+                    automation covers 20% of the volume and needs constant attention.
+                </p>
+                <p class="muted">
+                    Polypus treats that fragility as the actual engineering problem. Extraction is
+                    layout-aware rather than template-based, every field carries a confidence score,
+                    and nothing reaches SAP until it has passed the rules your controllers configured.
+                </p>
+
+                <h2 class="h3 mt-7">What you install</h2>
+                <p class="muted">
+                    A tenant in a region you choose, a connector to your SAP landscape, and the review
+                    console for the documents that need a human. No agents on SAP application servers,
+                    no user exits, no modifications to core objects.
+                </p>
+            </div>
+
+            <div>
+                <div class="metrics" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                    @foreach (var metric in ProductProfile.Metrics)
+                    {
+                        <div class="metric">
+                            <div class="metric__value">@metric.Value</div>
+                            <div class="metric__label">@metric.Label</div>
+                        </div>
+                    }
+                </div>
+
+                <div class="aside-panel mt-6">
+                    <h3 class="h4">Where Polypus sits</h3>
+                    <div class="dl">
+                        <div>
+                            <dt>Upstream</dt>
+                            <dd>Mailboxes, SFTP, scanners, Ariba, Fieldglass, your own apps</dd>
+                        </div>
+                        <div>
+                            <dt>Polypus</dt>
+                            <dd>Capture, extraction, validation, review, workflow, audit</dd>
+                        </div>
+                        <div>
+                            <dt>Downstream</dt>
+                            <dd>SAP ECC or S/4HANA via IDoc, BAPI/RFC and OData</dd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="The pipeline"
+                       Title="Four checkpoints between a document and a posting" />
+
+        <div class="process mt-7">
+            @foreach (var step in Steps)
+            {
+                <div class="process__step">
+                    <span class="process__num">@step.Number</span>
+                    <h3>@step.Title</h3>
+                    <p>@step.Summary</p>
+                    <span class="process__time">@step.Duration</span>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <SectionHeading Eyebrow="Coverage"
+                       Title="Documents Polypus reads today"
+                       Description="Adding a document type is configuration work, not a development project. If yours is not listed, ask - the answer is usually a two-week pilot." />
+
+        <div class="doc-strip mt-6">
+            @foreach (var docType in ProductProfile.DocumentTypes)
+            {
+                <span>@docType</span>
+            }
+        </div>
+
+        <div class="plans__toolbar plans__toolbar--center mt-7">
+            <a class="btn btn--primary btn--lg" href="/contact">
+                Book a walkthrough
+                <AppIcon Name="arrow-right" Size="18" />
+            </a>
+            <a class="btn btn--ghost btn--lg" href="/features">See the capabilities</a>
+        </div>
+    </div>
+</section>
+
+@code {
+    private static readonly IReadOnlyList<string> _pills =
+    [
+        ProductProfile.Positioning,
+        $"A product by {CompanyProfile.Name}"
+    ];
+
+    private static readonly IReadOnlyList<ProcessStep> Steps =
+    [
+        new("01", "Capture",
+            "Documents arrive from mailboxes, SFTP folders, Ariba queues, scanners or the API, are fingerprinted and de-duplicated on arrival.",
+            "instant"),
+        new("02", "Extract and validate",
+            "Line-level capture with confidence scores, checked against SAP master data: supplier, PO, tax code, cost centre and tolerances.",
+            "under 12 s median"),
+        new("03", "Review what needs it",
+            "Low-confidence or out-of-tolerance documents reach a reviewer with the source page beside the fields. Corrections tune the tenant.",
+            "exceptions only"),
+        new("04", "Post with evidence",
+            "Approved documents post through IDoc, BAPI or OData, with the source, model version, rule set and SAP response stored against them.",
+            "parked or posted")
+    ];
+}

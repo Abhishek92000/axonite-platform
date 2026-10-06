@@ -1,0 +1,81 @@
+@*
+    SectionHeading.razor
+    ------------------------------------------------------------------------
+    The small heading block that appears above every home page section:
+    an optional eyebrow label, a title, and an optional description.
+
+    Why it exists
+      * Six sections on the home page use identical heading markup. Centralising
+        it keeps the vertical rhythm consistent and means a copy change to a
+        heading style happens in one place.
+
+    Parameters
+      * Eyebrow     - small uppercase label, e.g. "Capabilities"
+      * Title       - the section heading (rendered as an <h2> by default)
+      * Description - supporting paragraph
+      * Split       - when true, the child content is placed on the right of the
+                      title (used for the "billing cycle" toggle in Plans)
+      * Align       - "start" (default) or "center"
+*@
+
+<div class="section-head @(Split ? "section-head--split" : null) @(Align == "center" ? "text-center" : null)">
+    <div class="stack">
+        @if (!string.IsNullOrWhiteSpace(Eyebrow))
+        {
+            <p class="eyebrow">@Eyebrow</p>
+        }
+
+        @if (Level == 1)
+        {
+            <h1 id="@Id" class="h2">@Title</h1>
+        }
+        else
+        {
+            <h2 id="@Id" class="h2">@Title</h2>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Description))
+        {
+            <p class="lead mb-0">@Description</p>
+        }
+    </div>
+
+    @if (Split && ChildContent is not null)
+    {
+        <div>@ChildContent</div>
+    }
+</div>
+
+@code {
+    /// <summary>Small uppercase label shown above the title.</summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    /// <summary>The section heading text.</summary>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>Optional supporting paragraph.</summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>Heading level to emit. 2 by default; use 1 on inner pages.</summary>
+    [Parameter]
+    public int Level { get; set; } = 2;
+
+    /// <summary>Optional id, useful when something links directly to the section.</summary>
+    [Parameter]
+    public string? Id { get; set; }
+
+    /// <summary>Place child content (a toggle, a button) on the right of the title.</summary>
+    [Parameter]
+    public bool Split { get; set; }
+
+    /// <summary>"start" or "center".</summary>
+    [Parameter]
+    public string Align { get; set; } = "start";
+
+    /// <summary>Content placed opposite the title when Split is true.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

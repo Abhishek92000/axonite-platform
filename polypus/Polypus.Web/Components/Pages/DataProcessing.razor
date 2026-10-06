@@ -1,0 +1,113 @@
+@page "/data-processing"
+@*
+    DataProcessing.razor  -  route /data-processing
+    ------------------------------------------------------------------------
+    Data Processing Addendum. Structure comes from LegalDocument.razor.
+
+    This is a realistic starting draft, not legal advice. A signed DPA attached
+    to the order form prevails over this page; this page exists so customers and
+    their legal teams can read the substance without asking for a document.
+
+    Linked from: the footer "Legal" column and the footer meta row.
+*@
+
+<PageTitle>Polypus Data Processing Addendum</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="How Axonite processes personal data on behalf of Polypus customers: scope, instructions, security measures, sub-processors, data residency and deletion." />
+</HeadContent>
+
+<PageHero Section="Data Processing"
+          Eyebrow="Legal"
+          Title="Data Processing Addendum"
+          Lead="How Axonite processes personal data on behalf of Polypus customers, and the commitments behind the security questionnaire." />
+
+<section class="section section--flush">
+    <div class="container">
+        <LegalDocument Updated="12 June 2025" Intro="@Intro" Sections="_sections" />
+    </div>
+</section>
+
+@code {
+    private const string Intro =
+        "This addendum applies where Axonite processes personal data contained in customer documents " +
+        "on behalf of a customer that is a controller. Where an order form is signed, that order " +
+        "form and its attached addendum prevail over this page.";
+
+    private static readonly IReadOnlyList<LegalSection> _sections =
+    [
+        new LegalSection("roles-and-scope", "Roles and scope",
+        [
+            "The customer is the controller of personal data contained in documents submitted to Polypus. Axonite is the processor, and processes that data only on the customer's documented instructions.",
+            "The subject matter, duration and nature of processing: extraction of structured data from business documents, application of validation rules, presentation for human review, and posting into the customer's SAP system. The duration is the term of the customer agreement.",
+            "The categories of data subject and personal data are determined by the documents a customer chooses to submit, and typically include supplier contacts, customer employees named on invoices, and expense claimants."
+        ]),
+
+        new LegalSection("instructions", "Our obligations as processor",
+        [
+            "We will:"
+        ])
+        {
+            Bullets =
+            [
+                "Process personal data only on documented instructions from the customer, including for international transfers",
+                "Ensure that staff authorised to process the data are bound by confidentiality obligations",
+                "Implement the technical and organisational measures described below",
+                "Assist the customer in responding to data subject requests within the functionality of the service",
+                "Notify the customer without undue delay, and within 72 hours, after becoming aware of a personal data breach",
+                "Assist the customer with data protection impact assessments and prior consultations where required",
+                "Delete or return personal data at the end of the provision of services, in line with the retention configuration",
+                "Make available the information necessary to demonstrate compliance, and allow for audits as described below"
+            ],
+            Note = "We will tell the customer immediately if, in our opinion, an instruction infringes applicable data protection law."
+        },
+
+        new LegalSection("security-measures", "Technical and organisational measures",
+        [
+            "Polypus is operated under controls aligned to SOC 2 Type II and ISO 27001."
+        ])
+        {
+            Bullets =
+            [
+                "Encryption in transit using TLS 1.2 or later; encryption at rest using AES-256",
+                "Customer-managed encryption keys available on Enterprise and on-premise deployments",
+                "Logical tenant isolation with row-level separation in shared deployments; physical separation in single-tenant deployments",
+                "Role-based access control with SAML 2.0 or OIDC single sign-on and SCIM provisioning",
+                "Mandatory multi-factor authentication for all Axonite staff with production access",
+                "Production access through a logged break-glass process, reviewed weekly and reported quarterly",
+                "Annual third-party penetration testing, with remediation tracked to closure",
+                "Documented incident response, business continuity and disaster recovery plans, tested annually"
+            ]
+        },
+
+        new LegalSection("sub-processors", "Sub-processors",
+        [
+            "The customer grants general written authorisation for Axonite to engage sub-processors. We impose data protection obligations on each sub-processor equivalent to those in this addendum, and remain liable for their performance.",
+            "We maintain a current sub-processor list and give at least 30 days' notice before adding or replacing one, so the customer can object. If the customer objects on reasonable data protection grounds and no alternative can be agreed, either party may terminate the affected part of the service."
+        ]),
+
+        new LegalSection("residency-and-transfers", "Data residency and transfers",
+        [
+            "Tenant data is stored in the region selected at provisioning time - EU (Frankfurt), India (Mumbai) or US (Virginia) - and residency is fixed for the life of the tenant and recorded in the order form.",
+            "Where a transfer outside the selected region is necessary to provide support, it is carried out under standard contractual clauses with a documented transfer impact assessment, and is logged. Customers on Enterprise plans can require that all support access is performed within their region."
+        ]),
+
+        new LegalSection("audit-rights", "Audit rights",
+        [
+            "We provide an annual third-party audit report or equivalent certification to demonstrate compliance. On reasonable written notice, and no more than once per 12 months, the customer may request additional information in the form of a security questionnaire response or a remote review session.",
+            "Where a customer requires an on-site audit, both parties agree to scope it in advance, to protect the confidentiality of other tenants' data, and to allocate reasonable costs."
+        ]),
+
+        new LegalSection("deletion", "Retention and deletion",
+        [
+            "Retention of document content is configurable per tenant, with a default of 24 months from processing. On termination, extracted data and source documents remain available for export for 30 days, after which they are deleted on a rolling basis and deletion is certified on request.",
+            "Backups containing tenant data are encrypted, access-controlled, and rotated out within 35 days, so that any residual copy is removed within one backup cycle."
+        ]),
+
+        new LegalSection("contact", "Contact",
+        [
+            "Data protection contact: privacy@axonite.io. Contractual and DPA questions: legal@axonite.io. A signed DPA on the customer's own paper can be executed on request."
+        ])
+    ];
+}

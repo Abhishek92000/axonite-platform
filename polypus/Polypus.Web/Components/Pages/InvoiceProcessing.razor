@@ -1,0 +1,271 @@
+@page "/workforce/invoice-processing"
+@rendermode InteractiveServer
+@*
+    InvoiceProcessing.razor - route /workforce/invoice-processing
+    ------------------------------------------------------------------------
+    A faithful build of the reference Invoice Processing page, using Polypus
+    branding:
+
+      1. Hero "Don't let invoices cost more than their face value." plus a
+         Start Now button and a small posting-pipeline panel
+      2. How it works - the 70+ actions narrative with three tabs
+         (PO Matching / e-Invoicing / Tax compliance & validation)
+      3. GBS Skills for touchless invoice posting - all 22 skills from the
+         reference, each tagged Low / Medium / High / Expert complexity
+      4. Success stories - three reference headlines
+      5. Closing CTA "Get invoices posted in days, not weeks"
+
+    Copy is carried verbatim from the reference; only the brand name is swapped
+    (Hypatos -> Polypus). Styles live in InvoiceProcessing.razor.css and use the
+    Polypus design tokens, so nothing here copies the reference theme.
+
+    Linked from: the header "Workforce" menu and the /workforce bundle grid.
+*@
+
+<PageTitle>Invoice Processing - Polypus Workforce</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="A workforce that captures, codes, matches and validates every invoice, then prepares a controlled posting in your ERP." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section ip-hero">
+    <div class="container">
+        <div class="ip-hero__inner">
+            <div>
+                <p class="eyebrow">The GBS Workforce for Invoice Processing</p>
+                <h1 class="display ip-hero__title">Don't let invoices cost more than their face value.</h1>
+
+                <div class="ip-hero__action">
+                    <a class="btn btn--primary btn--lg" href="#ip-skills">
+                        Start Now
+                        <AppIcon Name="arrow-right" Size="18" />
+                    </a>
+                </div>
+            </div>
+
+            <div class="ip-pipeline" aria-hidden="true">
+                @foreach (var step in Pipeline)
+                {
+                    <div class="ip-pipeline__step">
+                        <span class="ip-pipeline__icon"><AppIcon Name="@step.Icon" Size="17" /></span>
+                        <span class="ip-pipeline__label">@step.Label</span>
+                        <span class="ip-pipeline__note">@step.Note</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. How it works
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <p class="eyebrow">How it works</p>
+        <h2 class="h2 mt-2">A workforce shielding margins from the cost of mismanaged invoices</h2>
+        <p class="ip-how__body mt-4">
+            An invoice can take 70+ actions to post. If done manually, that means more errors and
+            slower cycles. Our GBS Workforce handles every step - capture, matching, coding,
+            approval, compliance - flagging mismatches before they become write-offs, duplicate
+            payments or fines.
+        </p>
+
+        <div class="ip-tabs" role="tablist" aria-label="Invoice processing capabilities">
+            @for (var i = 0; i < Tabs.Length; i++)
+            {
+                var index = i;
+                var tab = Tabs[i];
+
+                <button type="button"
+                        class="ip-tab"
+                        role="tab"
+                        id="@($"ip-tab-{index}")"
+                        aria-selected="@((_tab == index).ToString().ToLowerInvariant())"
+                        aria-controls="ip-panel"
+                        @onclick="() => SelectTab(index)">
+                    @tab.Label
+                </button>
+            }
+        </div>
+
+        @{
+            var active = Tabs[_tab];
+        }
+        <div class="ip-panel" id="ip-panel" role="tabpanel" aria-labelledby="@($"ip-tab-{_tab}")">
+            <h3 class="ip-panel__title">@active.Title</h3>
+            <p class="ip-panel__text">@active.Text</p>
+
+            <ul class="ip-panel__points">
+                @foreach (var point in active.Points)
+                {
+                    <li>
+                        <AppIcon Name="check" Size="15" />
+                        <span>@point</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Skills library
+   ========================================================================== *@
+<section class="section" id="ip-skills">
+    <div class="container">
+        <SectionHeading Eyebrow="Skills library"
+                       Title="GBS Skills for touchless invoice posting"
+                       Description="Every skill below is pre-packaged and live in production. The complexity tag shows how much context a skill weighs before it posts an outcome." />
+
+        <div class="ip-skills mt-7">
+            @foreach (var skill in Skills)
+            {
+                <article class="ip-skill">
+                    <span class="ip-tag ip-tag--@skill.Complexity">@ComplexityLabel(skill.Complexity)</span>
+                    <h3 class="ip-skill__title">@skill.Title</h3>
+                    <p class="ip-skill__body">@skill.Body</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Success stories
+   ========================================================================== *@
+<section class="section section--dark">
+    <div class="container">
+        <SectionHeading Eyebrow="Outcomes" Title="Success stories" />
+
+        <div class="ip-stories mt-7">
+            @foreach (var story in Stories)
+            {
+                <article class="ip-story">
+                    <span class="ip-story__mark"><AppIcon Name="@story.Icon" Size="19" /></span>
+                    <h3 class="ip-story__title">@story.Title</h3>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Closing CTA
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <div class="ip-cta">
+            <h2>Get invoices posted in days, not weeks</h2>
+
+            <div class="ip-cta__actions">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Book a walkthrough
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--on-dark btn--lg" href="/contact">Get in Touch</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private int _tab;
+
+    private void SelectTab(int index) => _tab = index;
+
+    private sealed record PipelineStep(string Label, string Note, string Icon);
+
+    private static readonly PipelineStep[] Pipeline =
+    [
+        new("Capture", "Any format, any channel", "scan"),
+        new("Match", "PO lines, prices, quantities", "layers"),
+        new("Code", "Accounts, tax and owner", "chart"),
+        new("Post", "Controlled ERP posting", "check-circle")
+    ];
+
+    private sealed record Tab(string Label, string Title, string Text, string[] Points);
+
+    private static readonly Tab[] Tabs =
+    [
+        new("PO Matching",
+            "Two- and three-way matching on every line",
+            "Invoices are matched against the purchase order and the goods receipt line by line, " +
+            "with tolerances your controllers configure. A mismatch becomes a specific exception " +
+            "with the reason attached, instead of a write-off discovered at month-end.",
+            [
+                "Line-level price, quantity and unit-of-measure comparison",
+                "Tolerance rules per supplier, company code and document type",
+                "Deviations routed to the owner who can resolve them"
+            ]),
+        new("e-Invoicing",
+            "Comply with the mandates without a parallel process",
+            "Structured e-invoices arrive alongside scans and PDFs and follow the same pipeline, " +
+            "so a mandate does not create a separate team, spreadsheet or duplicate-payment risk.",
+            [
+                "xRechnung, ZUGFeRD, Factur-X, FatturaPA, RO e-Factura and more",
+                "Structured and PDF invoices handled in one queue",
+                "Duplicate control across both channels"
+            ]),
+        new("Tax compliance & validation",
+            "VAT checked per line, with an explainable trail",
+            "Tax treatment is derived from jurisdiction, goods movement and transaction context, " +
+            "then checked against statutory rules. Every decision records the reasoning, so an " +
+            "auditor can follow it without asking your team to reconstruct it.",
+            [
+                "VAT, GST and US sales tax validation",
+                "Per-line tax coding from policy and history",
+                "Reasoning recorded on every decision"
+            ])
+    ];
+
+    private sealed record Skill(string Title, string Body, string Complexity);
+
+    private static readonly Skill[] Skills =
+    [
+        new("Input Validation", "Check that everything is in order at the door. AI Agents flag errors before they disrupt downstream processes.", "low"),
+        new("Document Routing", "Send it where it belongs. AI Agents route documents to the right agent or escalate to a human operator.", "low"),
+        new("Document Classification", "Sort with intelligence. AI Agents identify document types at scale, no templates needed.", "low"),
+        new("Document Splitting", "AI Agents detect multi-doc files and auto-split into clean, process-ready pages according to internal business logic.", "medium"),
+        new("Document Auto-rejection", "AI Agents reject non-processable or non-compliant items (missing mandatory data, policy violations) with reason codes.", "medium"),
+        new("Information Extraction", "Find what matters, fast. AI Agents pull key data from any format with high accuracy and nothing unnecessary.", "medium"),
+        new("Document Translation", "Machine-translate image content into a target language while preserving layout and key fields. E.g. a Japanese document looks like an English document after transformation.", "medium"),
+        new("Duplicate Prevention", "No more double entries. AI Agents detect and block duplicates before they hurt your bottom-line.", "medium"),
+        new("e-Invoicing", "Mandates are here. AI Agents help you comply with xRechnung, ZUGFeRD 2.3, Factur-X, FatturaPA, RO e-Factura, FA(2) - KSeF and more.", "medium"),
+        new("Company Master Enrichment", "Every transaction has one true owner. AI agents cut through attribution mess and assign the correct legal entity \u2014 using ERP and MDM data.", "high"),
+        new("Supplier Master Enrichment", "Know your vendor, instantly. AI agents match every supplier record and enrich it with IDs, banking details, and key attributes.", "high"),
+        new("PO Enrichment", "Match faster, with fewer errors. AI agents automate accuracy across every PO line.", "high"),
+        new("Approver Enrichment", "AI agents get transactions in front of the correct approver instantly - determined by authority matrix, spend thresholds, and policy.", "high"),
+        new("Payment Term Enrichment", "Make early-pay discounts the standard. AI agents apply the right payment logic to every transaction, instantly, from your master data or contracts.", "high"),
+        new("Central Bank Indicator Enrichment", "Statutory fields, handled. AI agents populate regulatory indicators from rules and master data \u2014 no manual effort required.", "high"),
+        new("Supplier & Approver Communication", "No more chasing. AI agents send the right message to the right person at the right time \u2014 keeping transactions moving even when unexpected bumps happen.", "high"),
+        new("Custom Master Data Enrichment", "Enrichment of a custom master data object from a source system. Record identification relies on structured master data. Master data is integrated with Polypus at an additional cost.", "high"),
+        new("Input Sorting", "Analyzes incoming files and emails to group related documents into cases for business transactions. Replaces manual sorting, ensuring cases are pre-organized for processing.", "high"),
+        new("Account Coding", "Books that balance themselves. AI Agents predict GL accounts, cost centers, and coding dimensions from context, policy, business rules and historical transaction records.", "expert"),
+        new("VAT Tax Compliance Validation", "Compliant invoices, confident audits. AI agents check against VAT rules, business logic, and statutory requirements, leaving a clear, explainable trail.", "expert"),
+        new("VAT Tax Coding", "No more tax guesswork. AI agents analyze jurisdiction, goods movement, and transaction context to assign the right VAT, GST, or sales tax code \u2014 with full reasoning you can audit.", "expert"),
+        new("US Sales Tax Validation", "Stay compliant across the US. AI Agents validate US sales tax instantly, powered by Vertex.", "expert")
+    ];
+
+    private sealed record Story(string Title, string Icon);
+
+    private static readonly Story[] Stories =
+    [
+        new("1M+ invoices from 15,000 suppliers handled with an agentic workforce", "chart"),
+        new("Agentic PO matching for 88 companies in under 4 months", "users"),
+        new("Repeatable agentic transformation for an energy giant across 30+ countries", "globe")
+    ];
+
+    private static string ComplexityLabel(string complexity) => complexity switch
+    {
+        "low" => "Low complexity",
+        "medium" => "Medium complexity",
+        "high" => "High complexity",
+        "expert" => "Expert complexity",
+        _ => complexity
+    };
+}
+

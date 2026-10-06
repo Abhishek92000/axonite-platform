@@ -1,0 +1,244 @@
+/* ============================================================================
+   Polypus - Agents.razor.css
+   ----------------------------------------------------------------------------
+   Scoped styles for /agents. Mirrors the reference page structure (hero, three
+   "how agents work" cards, the workforce bundle groups, Build Your Own band,
+   FAQ) using the Polypus design tokens from app.css.
+
+   Sections:
+     1. Hero
+     2. How agents work
+     3. Workforce bundles
+     4. Build Your Own
+     5. Responsive
+   ========================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Hero
+   --------------------------------------------------------------------------- */
+.ag-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--s-8) var(--s-9);
+    border-top: 0;
+}
+
+.ag-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(60rem 30rem at 88% -12%, rgba(15, 118, 110, 0.11), transparent 60%),
+        radial-gradient(40rem 24rem at 6% 0%, rgba(198, 158, 78, 0.1), transparent 62%);
+    pointer-events: none;
+}
+
+.ag-hero .container { position: relative; }
+
+.ag-hero__inner { max-width: 60ch; }
+
+.ag-hero__title { max-width: 16ch; }
+
+.ag-hero__copy {
+    margin-top: var(--s-5);
+    max-width: 62ch;
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ---------------------------------------------------------------------------
+   2. How agents work
+   --------------------------------------------------------------------------- */
+.ag-features {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-5);
+}
+
+.ag-feature {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-7) var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.ag-feature:hover {
+    border-color: #d3cec4;
+    box-shadow: var(--sh-2);
+    transform: translateY(-2px);
+}
+
+.ag-feature__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    margin-bottom: var(--s-5);
+    border-radius: var(--r-sm);
+    background: linear-gradient(150deg, var(--accent-soft), var(--white));
+    color: var(--accent);
+}
+
+.ag-feature__title {
+    margin-bottom: 0.55rem;
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+}
+
+.ag-feature__text {
+    margin: 0;
+    color: var(--ink-2);
+    font-size: 0.925rem;
+    line-height: 1.65;
+}
+
+/* ---------------------------------------------------------------------------
+   3. Workforce bundles
+   --------------------------------------------------------------------------- */
+.ag-primary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-5);
+}
+
+.ag-secondary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-5);
+    margin-top: var(--s-5);
+}
+
+.ag-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.ag-card:hover {
+    border-color: #d3cec4;
+    box-shadow: var(--sh-2);
+    transform: translateY(-2px);
+}
+
+.ag-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    color: var(--accent);
+}
+
+.ag-card__title {
+    margin-bottom: 0.35rem;
+    font-size: 1.02rem;
+    font-weight: 600;
+}
+
+.ag-card__text {
+    margin: 0;
+    color: var(--ink-3);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.ag-card--soon { opacity: 0.72; }
+.ag-card--soon:hover { transform: none; box-shadow: var(--sh-1); }
+
+.ag-card__soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    color: var(--ink-3);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.ag-card__soon .badge-dot { background: var(--ink-3); }
+
+/* ---------------------------------------------------------------------------
+   4. Build Your Own
+   --------------------------------------------------------------------------- */
+.ag-build {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-7);
+    align-items: center;
+    padding: var(--s-8);
+    border-radius: var(--r-md);
+    background: var(--dark);
+    color: var(--ink-inverse-2);
+}
+
+.ag-build h2 {
+    color: var(--ink-inverse);
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+    letter-spacing: -0.015em;
+}
+
+.ag-build p {
+    margin-top: 0.7rem;
+    max-width: 52ch;
+    line-height: 1.7;
+}
+
+.ag-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: var(--s-5);
+}
+
+.ag-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--line-dark);
+    border-radius: var(--r-full);
+    color: var(--ink-inverse);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.ag-tag svg { color: var(--accent-bright); }
+
+.ag-build__action { justify-self: end; }
+
+/* ---------------------------------------------------------------------------
+   5. Responsive
+   --------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+    .ag-features { grid-template-columns: minmax(0, 1fr); }
+
+    .ag-primary,
+    .ag-secondary { grid-template-columns: minmax(0, 1fr); }
+
+    .ag-build { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 720px) {
+    .ag-build { padding: var(--s-7) var(--s-6); }
+
+    .ag-build__action,
+    .ag-build__action .btn { width: 100%; }
+}

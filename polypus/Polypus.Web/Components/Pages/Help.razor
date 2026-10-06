@@ -1,0 +1,133 @@
+@page "/help"
+@rendermode InteractiveServer
+@*
+    Help.razor  -  route /help
+    ------------------------------------------------------------------------
+    The Help Center. A search box plus category filter chips on the left, the
+    filtered question list on the right, and support contact panels below.
+
+    This is the only strongly interactive content page: typing in the search box
+    filters the list live, so the component re-renders on each keystroke.
+    Filtering itself lives in FaqCatalog.Search(term, category) so the logic is
+    testable and shared.
+
+    Linked from: the footer "Resources" column, the header, every FAQ teaser.
+*@
+
+<PageTitle>Polypus Help Center</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="Answers about rollout timelines, extraction accuracy, billing, data residency, support levels and integrations, plus how to reach the Polypus support team." />
+</HeadContent>
+
+<PageHero Section="Help Center"
+          Eyebrow="Resources"
+          Title="Answers, and a person if you need one"
+          Lead="Search the questions below, or skip straight to the support panel. Existing customers can raise a ticket by email with the tenant name and the document id." />
+
+<section class="section section--flush">
+    <div class="container">
+        <div class="toolbar">
+            <label class="search">
+                <span class="sr-only">Search help topics</span>
+                <AppIcon Name="search" Size="17" />
+                <input type="search"
+                       placeholder="Search: residency, tolerance, IDoc, upgrade, billing..."
+                       value="@_term"
+                       @oninput="OnSearch" />
+            </label>
+
+            <div class="filter-chips">
+                <button type="button"
+                        class="filter-chip"
+                        aria-pressed="@(_category is null ? "true" : "false")"
+                        @onclick="() => SelectCategory(null)">
+                    All
+                </button>
+
+                @foreach (var category in FaqCatalog.Categories)
+                {
+                    var value = category;
+                    <button type="button"
+                            class="filter-chip"
+                            aria-pressed="@(string.Equals(_category, value, StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
+                            @onclick="() => SelectCategory(value)">
+                        @value
+                    </button>
+                }
+            </div>
+        </div>
+
+        <p class="text-sm muted mt-4">
+            Showing @Results.Count of @FaqCatalog.All.Count questions
+            @if (!string.IsNullOrWhiteSpace(_term))
+            {
+                @:for "@_term"
+            }
+        </p>
+
+        <FaqList Items="Results" ShowCategory="true" CssClass="mt-2" />
+    </div>
+</section>
+
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="Still stuck"
+                       Title="Talk to support" />
+
+        <div class="grid-3 mt-6">
+            <div class="aside-panel">
+                <span class="card__icon"><AppIcon Name="mail" Size="20" /></span>
+                <h3 class="h4">Email support</h3>
+                <p class="mb-0">
+                    <a href="mailto:@CompanyProfile.SupportEmail">@CompanyProfile.SupportEmail</a>
+                </p>
+                <p class="text-sm muted mb-0">
+                    Include the tenant name, the document id and, for posting failures, the SAP
+                    response from the review console.
+                </p>
+            </div>
+
+            <div class="aside-panel">
+                <span class="card__icon"><AppIcon Name="clock" Size="20" /></span>
+                <h3 class="h4">Support hours</h3>
+                <p class="mb-0">@CompanyProfile.SupportHours</p>
+                <p class="text-sm muted mb-0">
+                    Business and Enterprise plans include 24x7 severity-1 cover with a documented
+                    incident process.
+                </p>
+            </div>
+
+            <div class="aside-panel">
+                <span class="card__icon"><AppIcon Name="flow" Size="20" /></span>
+                <h3 class="h4">Status and changes</h3>
+                <p class="mb-0">
+                    <a class="link-arrow" href="/status">
+                        System status
+                        <AppIcon Name="arrow-right" Size="15" />
+                    </a>
+                </p>
+                <p class="mb-0">
+                    <a class="link-arrow" href="/changelog">
+                        Release notes
+                        <AppIcon Name="arrow-right" Size="15" />
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private string? _term;
+    private string? _category;
+
+    /// <summary>The filtered FAQ list, recomputed on every render from the catalog.</summary>
+    private IReadOnlyList<Faq> Results => FaqCatalog.Search(_term, _category);
+
+    /// <summary>Reads the search box value. Kept as a string so no debouncing is needed.</summary>
+    private void OnSearch(ChangeEventArgs args) => _term = args.Value?.ToString();
+
+    private void SelectCategory(string? category) => _category = category;
+}

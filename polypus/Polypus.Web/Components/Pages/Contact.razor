@@ -1,0 +1,955 @@
+@page "/contact"
+@rendermode InteractiveServer
+@using System.Globalization
+@using Polypus.Web.Services
+@inject NavigationManager Nav
+@inject IConfiguration Configuration
+@implements IDisposable
+
+<PageTitle>Contact Polypus — schedule a meeting</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="Schedule a walkthrough or discussion with the Polypus team. Pick an available slot directly via our live scheduler." />
+</HeadContent>
+
+<PageHero Section="Contact"
+          Eyebrow="Contact &amp; demo"
+          Title="@Headline"
+          Lead="Select your meeting preference and choose a convenient time slot. Our live scheduler directly syncs with our team's availability."
+          Pills="_heroPills" />
+
+<section class="section section--flush">
+    <div class="container">
+        <div class="contact-layout">
+            <div class="contact-card">
+                
+
+                <h2 class="h3">Schedule a Meeting</h2>
+                <p class="muted mb-5">
+                    Choose a meeting type and date to view real-time availability. All fields are required.
+                </p>
+
+                <form @onsubmit="HandleScheduleMeeting" @onsubmit:preventDefault>
+                    <div class="form-grid">
+                        @* 1. Name *@
+                        <div class="field">
+                            <label for="fullName">Name *</label>
+                            <input id="fullName"
+                                   type="text"
+                                   @bind="_name"
+                                   @bind:event="oninput"
+                                   placeholder="Your full name"
+                                   autocomplete="name"
+                                   class="@(_validationErrors.ContainsKey("Name") ? "invalid" : "")" />
+                            @if (_validationErrors.TryGetValue("Name", out var nameErr))
+                            {
+                                <span class="validation-message">@nameErr</span>
+                            }
+                        </div>
+
+                        @* 2. Work Email *@
+                        <div class="field">
+                            <label for="workEmail">Work Email *</label>
+                            <input id="workEmail"
+                                   type="email"
+                                   @bind="_workEmail"
+                                   @bind:event="oninput"
+                                   placeholder="you@company.com"
+                                   autocomplete="email"
+                                   class="@(_validationErrors.ContainsKey("WorkEmail") ? "invalid" : "")" />
+                            @if (_validationErrors.TryGetValue("WorkEmail", out var emailErr))
+                            {
+                                <span class="validation-message">@emailErr</span>
+                            }
+                        </div>
+
+                        @* 3. Company Name *@
+                        <div class="field field--full">
+                            <label for="companyName">Company Name *</label>
+                            <input id="companyName"
+                                   type="text"
+                                   @bind="_companyName"
+                                   @bind:event="oninput"
+                                   placeholder="Acme Corporation"
+                                   autocomplete="organization"
+                                   class="@(_validationErrors.ContainsKey("CompanyName") ? "invalid" : "")" />
+                            @if (_validationErrors.TryGetValue("CompanyName", out var compErr))
+                            {
+                                <span class="validation-message">@compErr</span>
+                            }
+                        </div>
+
+                        @* 4. Meeting Type (only Quick Meeting — 15 min and Standard Meeting — 30 min) *@
+                        <div class="field field--full">
+                            <label>Meeting Type *</label>
+                            <div class="meeting-type-selector">
+                                @foreach (var type in _availableMeetingTypes)
+                                {
+                                    <label class="meeting-type-option @(_selectedMeetingTypeId == type.Id ? "is-selected" : "")">
+                                        <input type="radio"
+                                               name="meetingTypeRadio"
+                                               value="@type.Id"
+                                               checked="@(_selectedMeetingTypeId == type.Id)"
+                                               @onchange="() => OnMeetingTypeChanged(type.Id)" />
+                                        <div class="meeting-type-option__content">
+                                            <span class="meeting-type-option__title">@type.DisplayName</span>
+                                            <span class="meeting-type-option__desc">
+                                                @(type.Length == 15 ? "Quick 15-minute introduction & scoping" : "Detailed 30-minute deep dive & live demo")
+                                            </span>
+                                        </div>
+                                    </label>
+                                }
+                            </div>
+                        </div>
+
+                        @* 5. Date Field with Calendar Icon & Picker (Only next 3 days enabled) *@
+                        <div class="field field--full">
+                            <label for="meetingDate">Date *</label>
+                            <div class="date-input-group">
+                                <input id="meetingDate"
+                                       type="text"
+                                       readonly
+                                       value="@SelectedDateDisplay"
+                                       placeholder="Select an upcoming date"
+                                       @onclick="ToggleDatePicker"
+                                       class="date-input-control @(_validationErrors.ContainsKey("Date") ? "invalid" : "")" />
+                                <button type="button"
+                                        id="openCalendarBtn"
+                                        class="date-picker-icon-btn"
+                                        @onclick="ToggleDatePicker"
+                                        aria-label="Open date picker calendar">
+                                    <AppIcon Name="calendar" Size="20" />
+                                </button>
+                            </div>
+                            <span class="field__hint">
+                                Available for booking on the next 3 days:
+                                @string.Join(", ", AllowedDates.Select(d => d.ToString("ddd, MMM d", CultureInfo.InvariantCulture)))
+                            </span>
+                            @if (_validationErrors.TryGetValue("Date", out var dateErr))
+                            {
+                                <span class="validation-message">@dateErr</span>
+                            }
+
+                            @* Date Picker Dropdown Popover *@
+                            @if (_showDatePicker)
+                            {
+                                <div class="calendar-popover" role="dialog" aria-modal="true" aria-label="Select meeting date">
+                                    <div class="calendar-popover__header">
+                                        <span class="calendar-popover__title">@_pickerMonthDate.ToString("MMMM yyyy", CultureInfo.InvariantCulture)</span>
+                                        <button type="button" class="calendar-popover__close" @onclick="() => _showDatePicker = false" aria-label="Close date picker">
+                                            <AppIcon Name="close" Size="16" />
+                                        </button>
+                                    </div>
+
+                                    <div class="calendar-grid">
+                                        <span class="cal-dow">Su</span>
+                                        <span class="cal-dow">Mo</span>
+                                        <span class="cal-dow">Tu</span>
+                                        <span class="cal-dow">We</span>
+                                        <span class="cal-dow">Th</span>
+                                        <span class="cal-dow">Fr</span>
+                                        <span class="cal-dow">Sa</span>
+
+                                        @{
+                                            var firstDayOfMonth = new DateOnly(_pickerMonthDate.Year, _pickerMonthDate.Month, 1);
+                                            var offset = (int)firstDayOfMonth.DayOfWeek;
+                                            var daysInMonth = DateTime.DaysInMonth(_pickerMonthDate.Year, _pickerMonthDate.Month);
+                                        }
+
+                                        @for (var i = 0; i < offset; i++)
+                                        {
+                                            <span class="cal-day cal-day--empty"></span>
+                                        }
+
+                                        @for (var dayNum = 1; dayNum <= daysInMonth; dayNum++)
+                                        {
+                                            var currentDay = new DateOnly(_pickerMonthDate.Year, _pickerMonthDate.Month, dayNum);
+                                            var isSelectable = IsDateSelectable(currentDay);
+                                            var isSelected = _selectedDate == currentDay;
+
+                                            @if (isSelectable)
+                                            {
+                                                <button type="button"
+                                                        class="cal-day cal-day--selectable @(isSelected ? "cal-day--selected" : "")"
+                                                        @onclick="() => SelectDate(currentDay)"
+                                                        title="@currentDay.ToString("dddd, MMM d", CultureInfo.InvariantCulture)">
+                                                    @dayNum
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <span class="cal-day cal-day--disabled" aria-disabled="true">
+                                                    @dayNum
+                                                </span>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="calendar-popover__footer">
+                                        <span class="text-xs muted">Only the next 3 days from today are selectable</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        @* 6. Slots Section (Triggered upon date selection) *@
+                        @if (_selectedDate != null)
+                        {
+                            <div class="field field--full slots-section">
+                                <label>Available Slots for @_selectedDate.Value.ToString("dddd, MMMM d, yyyy", CultureInfo.InvariantCulture) *</label>
+
+                                @if (_isLoadingSlots)
+                                {
+                                    <div class="slots-loading">
+                                        <span class="spinner"></span>
+                                        <span>Fetching available slots from Calid.Api...</span>
+                                    </div>
+                                }
+                                else if (_availableSlots.Count > 0)
+                                {
+                                    <div class="slots-grid">
+                                        @foreach (var slot in _availableSlots)
+                                        {
+                                            var isChosen = _selectedSlot?.Time == slot.Time;
+                                            <button type="button"
+                                                    class="slot-btn @(isChosen ? "slot-btn--selected" : "")"
+                                                    @onclick="() => SelectSlot(slot)">
+                                                <AppIcon Name="clock" Size="14" />
+                                                <span>@FormatSlotTime(slot.Time)</span>
+                                            </button>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="slots-empty">
+                                        <AppIcon Name="alert" Size="18" />
+                                        <div>
+                                            <strong>No available slots for @_selectedDate?.ToString("dddd, MMM d")</strong>
+                                            <p class="mb-0 text-xs">
+                                                @if (_selectedDate?.DayOfWeek == DayOfWeek.Saturday || _selectedDate?.DayOfWeek == DayOfWeek.Sunday)
+                                                {
+                                                    <span>Weekends are outside business hours (Monday–Friday). Please select a business day (e.g. Friday, Sep 25 or Monday, Sep 28).</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>All slots on this date may conflict with existing bookings. Please select another date.</span>
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (_validationErrors.TryGetValue("Slot", out var slotErr))
+                                {
+                                    <span class="validation-message">@slotErr</span>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <p> </p>
+                @* -------- Success Toast / Banner -------- *@
+                @if (!string.IsNullOrEmpty(_successMessage))
+                {
+                    <div class="schedule-alert schedule-alert--success" role="status">
+                        <span class="schedule-alert__icon"><AppIcon Name="check-circle" Size="22" /></span>
+                        <div class="schedule-alert__body">
+                            <h3 class="h4 mb-0">Meeting Scheduled Successfully!</h3>
+                            <p class="mb-0 text-sm">@_successMessage</p>
+                        </div>
+                    </div>
+                }
+
+                @* -------- Error Banner -------- *@
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <div class="schedule-alert schedule-alert--error" role="alert">
+                        <span class="schedule-alert__icon"><AppIcon Name="alert" Size="20" /></span>
+                        <div class="schedule-alert__body">
+                            <strong class="schedule-alert__title">Unable to schedule meeting</strong>
+                            <p class="mb-0 text-sm">@_errorMessage</p>
+                        </div>
+                    </div>
+                }
+
+                    @* Form Actions *@
+                    <div class="form-actions">
+                        <button type="submit"
+                                class="btn btn--primary btn--lg"
+                                disabled="@_isSubmitting"
+                                id="scheduleMeetingBtn">
+                            @if (_isSubmitting)
+                            {
+                                <span>Scheduling meeting...</span>
+                            }
+                            else
+                            {
+                                <span>Schedule Meeting</span>
+                                <AppIcon Name="arrow-right" Size="18" />
+                            }
+                        </button>
+                        <span class="text-xs muted">Instant confirmation with Google Meet link.</span>
+                    </div>
+                </form>
+                
+            </div>
+
+            <aside class="stack">
+                <div class="aside-panel aside-panel--accent">
+                    <h3 class="h4">Live Scheduling</h3>
+                    <p class="mb-0">
+                        Bookings are automatically verified against real-time availability on Cal.id to prevent any schedule overlap.
+                    </p>
+                </div>
+
+                <div class="aside-panel">
+                    <h3 class="h4">What to Expect</h3>
+                    <ol class="aside-steps">
+                        <li>Instant calendar invite sent directly to your work email.</li>
+                        <li>A 1-on-1 session with our product specialist on Google Meet.</li>
+                        <li>Live walkthrough of intelligent document extraction &amp; SAP posting.</li>
+                        <li>Discussion tailored to your monthly document volumes and ERP architecture.</li>
+                    </ol>
+                </div>
+
+                <div class="aside-panel aside-panel--dark">
+                    <h3 class="h4">Prefer Direct Contact?</h3>
+                    <div class="dl">
+                        <div>
+                            <dt>Phone</dt>
+                            <dd>@CompanyProfile.Phone</dd>
+                        </div>
+                        <div>
+                            <dt>Support hours</dt>
+                            <dd>@CompanyProfile.SupportHours</dd>
+                        </div>
+                        <div>
+                            <dt>Sales</dt>
+                            <dd><a href="mailto:@CompanyProfile.SalesEmail">@CompanyProfile.SalesEmail</a></dd>
+                        </div>
+                    </div>
+                    <p class="text-xs mb-0">
+                        Existing customer? Use the <a href="/help">Help Center</a> or email
+                        <a href="mailto:@CompanyProfile.SupportEmail">@CompanyProfile.SupportEmail</a>.
+                    </p>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Scoped styling additions for meeting scheduler */
+    .schedule-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+        padding: 1rem 1.25rem;
+        border-radius: var(--r-sm);
+        margin-bottom: var(--s-5);
+    }
+
+    .schedule-alert--success {
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+    }
+
+    .schedule-alert--error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+
+    .schedule-alert__icon {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 0.1rem;
+        flex-shrink: 0;
+    }
+
+    .schedule-alert__title {
+        display: block;
+        font-size: 0.94rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+
+    /* Meeting type radio cards */
+    .meeting-type-selector {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--s-4);
+        margin-top: 0.35rem;
+    }
+
+    @@media (max-width: 640px) {
+        .meeting-type-selector {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .meeting-type-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.9rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: var(--r-sm);
+        background: var(--white);
+        cursor: pointer;
+        transition: border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .meeting-type-option:hover {
+        border-color: var(--accent);
+    }
+
+    .meeting-type-option.is-selected {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.16);
+    }
+
+    .meeting-type-option input[type="radio"] {
+        margin-top: 0.25rem;
+        width: 17px;
+        height: 17px;
+        accent-color: var(--accent);
+        flex-shrink: 0;
+    }
+
+    .meeting-type-option__content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .meeting-type-option__title {
+        font-weight: 600;
+        font-size: 0.92rem;
+        color: var(--ink);
+    }
+
+    .meeting-type-option__desc {
+        font-size: 0.78rem;
+        color: var(--ink-3);
+        line-height: 1.35;
+    }
+
+    /* Date field with calendar button */
+    .date-input-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .date-input-control {
+        width: 100%;
+        padding-right: 2.8rem !important;
+        cursor: pointer;
+    }
+
+    .date-picker-icon-btn {
+        position: absolute;
+        right: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border: none;
+        background: transparent;
+        color: var(--ink-2);
+        border-radius: var(--r-sm);
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .date-picker-icon-btn:hover {
+        background: var(--line-soft);
+        color: var(--accent);
+    }
+
+    /* Date picker popover */
+    .calendar-popover {
+        margin-top: 0.5rem;
+        padding: 1rem;
+        border: 1px solid var(--line);
+        border-radius: var(--r-md);
+        background: var(--white);
+        box-shadow: var(--sh-3, 0 10px 25px -5px rgba(0,0,0,0.1));
+        max-width: 320px;
+    }
+
+    .calendar-popover__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--line-soft);
+    }
+
+    .calendar-popover__title {
+        font-weight: 600;
+        font-size: 0.92rem;
+        color: var(--ink);
+    }
+
+    .calendar-popover__close {
+        border: none;
+        background: transparent;
+        color: var(--ink-3);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 0.2rem;
+        border-radius: var(--r-sm);
+    }
+
+    .calendar-popover__close:hover {
+        color: var(--ink);
+        background: var(--line-soft);
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        text-align: center;
+    }
+
+    .cal-dow {
+        font-size: 0.74rem;
+        font-weight: 600;
+        color: var(--ink-3);
+        padding: 0.25rem 0;
+    }
+
+    .cal-day {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        font-size: 0.84rem;
+        border-radius: var(--r-sm);
+        border: none;
+        background: transparent;
+    }
+
+    .cal-day--empty {
+        visibility: hidden;
+    }
+
+    .cal-day--disabled {
+        color: #d1d5db;
+        cursor: not-allowed;
+        background: #f9fafb;
+    }
+
+    .cal-day--selectable {
+        color: var(--ink);
+        font-weight: 600;
+        background: var(--white);
+        border: 1px solid var(--line);
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .cal-day--selectable:hover {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+    }
+
+    .cal-day--selected {
+        background: var(--accent) !important;
+        border-color: var(--accent) !important;
+        color: #ffffff !important;
+    }
+
+    .calendar-popover__footer {
+        margin-top: 0.75rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--line-soft);
+        text-align: center;
+    }
+
+    /* Slots section */
+    .slots-section {
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--line-soft);
+    }
+
+    .slots-loading {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1.25rem;
+        background: var(--line-soft);
+        border-radius: var(--r-sm);
+        font-size: 0.88rem;
+        color: var(--ink-2);
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--line);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .slots-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.55rem;
+        margin-top: 0.5rem;
+        max-height: 240px;
+        overflow-y: auto;
+        padding: 2px;
+    }
+
+    .slot-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.65rem 0.75rem;
+        border: 1px solid var(--line);
+        border-radius: var(--r-sm);
+        background: var(--white);
+        color: var(--ink);
+        font-size: 0.84rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .slot-btn:hover {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+    }
+
+    .slot-btn--selected {
+        border-color: var(--accent) !important;
+        background: var(--accent) !important;
+        color: #ffffff !important;
+        font-weight: 600;
+    }
+
+    .slots-empty {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 1rem;
+        background: #fefce8;
+        border: 1px solid #fef08a;
+        color: #854d0e;
+        border-radius: var(--r-sm);
+        font-size: 0.86rem;
+    }
+</style>
+
+@code {
+    [SupplyParameterFromQuery(Name = "plan")]
+    public string? PlanId { get; set; }
+
+    private Plan? _plan;
+    private CalIdClient _calIdClient = default!;
+
+    // Form inputs (only these)
+    private string _name = string.Empty;
+    private string _workEmail = string.Empty;
+    private string _companyName = string.Empty;
+    private int _selectedMeetingTypeId = 111709; // Default: Quick Meeting — 15 min
+
+    // Meeting Types loaded from Calid.Api
+    private IReadOnlyList<CalIdEventType> _availableMeetingTypes =
+    [
+        new CalIdEventType { Id = 111709, Title = "Quick Meeting", Slug = "quick-meeting", Length = 15, Hidden = false },
+        new CalIdEventType { Id = 111710, Title = "Standard Meeting", Slug = "standard-meeting", Length = 30, Hidden = false }
+    ];
+
+    // Date Picker state
+    private DateOnly? _selectedDate;
+    private bool _showDatePicker;
+    private DateOnly _pickerMonthDate = DateOnly.FromDateTime(DateTime.Today);
+
+    // Slots state
+    private bool _isLoadingSlots;
+    private IReadOnlyList<CalIdSlot> _availableSlots = [];
+    private CalIdSlot? _selectedSlot;
+
+    // Submission & Feedback states
+    private bool _isSubmitting;
+    private string? _successMessage;
+    private string? _errorMessage;
+    private readonly Dictionary<string, string> _validationErrors = new();
+
+    /// <summary>
+    /// Next 3 bookable business days from today (where host has slots), plus calendar dates.
+    /// </summary>
+    private IReadOnlyList<DateOnly> AllowedDates
+    {
+        get
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var days = new List<DateOnly>();
+            var cursor = today.AddDays(1);
+            while (days.Count < 3)
+            {
+                if (cursor.DayOfWeek != DayOfWeek.Saturday && cursor.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    days.Add(cursor);
+                }
+                cursor = cursor.AddDays(1);
+            }
+            return days;
+        }
+    }
+
+    private string SelectedDateDisplay =>
+        _selectedDate.HasValue
+            ? _selectedDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+            : string.Empty;
+
+    private string Headline => _plan is null
+        ? "Let's talk with a live walkthrough."
+        : $"Book a walkthrough for the {_plan.Name} plan.";
+
+    private IReadOnlyList<string> _heroPills => _plan is null
+        ? []
+        : [$"{_plan.Name} plan selected", _plan.DocumentsPerMonth];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _plan = PlanCatalog.Find(PlanId);
+        Nav.LocationChanged += OnLocationChanged;
+
+        var baseUrl = Configuration["CalidApi:BaseUrl"] ?? "http://localhost:5000";
+        _calIdClient = new CalIdClient(baseUrl: baseUrl);
+
+        // Fetch configured event types from Calid.Api
+        var types = await _calIdClient.GetPublicEventTypesAsync();
+        if (types.Count > 0)
+        {
+            _availableMeetingTypes = types;
+            if (_availableMeetingTypes.All(t => t.Id != _selectedMeetingTypeId))
+            {
+                _selectedMeetingTypeId = _availableMeetingTypes[0].Id;
+            }
+        }
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        var plan = PlanCatalog.Find(PlanId);
+        if (plan is null || plan.Id == _plan?.Id)
+        {
+            return;
+        }
+
+        _plan = plan;
+        StateHasChanged();
+    }
+
+    private bool IsDateSelectable(DateOnly date)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        return AllowedDates.Contains(date) || date == today.AddDays(1) || date == today.AddDays(2) || date == today.AddDays(3);
+    }
+
+    private void ToggleDatePicker()
+    {
+        _showDatePicker = !_showDatePicker;
+        if (_showDatePicker)
+        {
+            // Focus on the month containing the allowed dates
+            _pickerMonthDate = AllowedDates[0];
+        }
+    }
+
+    private async Task SelectDate(DateOnly date)
+    {
+        if (!IsDateSelectable(date))
+        {
+            return;
+        }
+
+        _selectedDate = date;
+        _showDatePicker = false;
+        _selectedSlot = null;
+        _validationErrors.Remove("Date");
+        _validationErrors.Remove("Slot");
+
+        await FetchSlotsAsync();
+    }
+
+    private async Task OnMeetingTypeChanged(int eventTypeId)
+    {
+        _selectedMeetingTypeId = eventTypeId;
+        _selectedSlot = null;
+        _validationErrors.Remove("Slot");
+
+        if (_selectedDate != null)
+        {
+            await FetchSlotsAsync();
+        }
+    }
+
+    private async Task FetchSlotsAsync()
+    {
+        if (_selectedDate == null)
+        {
+            return;
+        }
+
+        _isLoadingSlots = true;
+        _availableSlots = [];
+        StateHasChanged();
+
+        var selectedType = _availableMeetingTypes.FirstOrDefault(t => t.Id == _selectedMeetingTypeId)
+                           ?? new CalIdEventType { Id = _selectedMeetingTypeId, Length = 15 };
+
+        var dateStr = _selectedDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+        _availableSlots = await _calIdClient.GetAvailableSlotsWithConflictCheckAsync(
+            dateStr,
+            selectedType.Id,
+            selectedType.Length);
+
+        _isLoadingSlots = false;
+        StateHasChanged();
+    }
+
+    private void SelectSlot(CalIdSlot slot)
+    {
+        _selectedSlot = slot;
+        _validationErrors.Remove("Slot");
+    }
+
+    private static string FormatSlotTime(string isoTime)
+    {
+        if (DateTimeOffset.TryParse(isoTime, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dto))
+        {
+            return dto.ToLocalTime().ToString("h:mm tt", CultureInfo.InvariantCulture);
+        }
+
+        return isoTime;
+    }
+
+    private async Task HandleScheduleMeeting()
+    {
+        _successMessage = null;
+        _errorMessage = null;
+        _validationErrors.Clear();
+
+        // 1. Name validation
+        if (string.IsNullOrWhiteSpace(_name))
+        {
+            _validationErrors["Name"] = "Name is required.";
+        }
+
+        // 2. Work Email validation
+        if (string.IsNullOrWhiteSpace(_workEmail))
+        {
+            _validationErrors["WorkEmail"] = "Work Email is required.";
+        }
+        else if (!_workEmail.Contains('@') || !_workEmail.Contains('.'))
+        {
+            _validationErrors["WorkEmail"] = "Please enter a valid email address.";
+        }
+
+        // 3. Company Name validation
+        if (string.IsNullOrWhiteSpace(_companyName))
+        {
+            _validationErrors["CompanyName"] = "Company Name is required.";
+        }
+
+        // 4. Date validation
+        if (_selectedDate == null)
+        {
+            _validationErrors["Date"] = "Please select a date from the calendar.";
+        }
+
+        // 5. Slot validation
+        if (_selectedSlot == null)
+        {
+            _validationErrors["Slot"] = "Please select an available time slot.";
+        }
+
+        if (_validationErrors.Count > 0)
+        {
+            return;
+        }
+
+        _isSubmitting = true;
+        StateHasChanged();
+
+        try
+        {
+            var selectedType = _availableMeetingTypes.FirstOrDefault(t => t.Id == _selectedMeetingTypeId)
+                               ?? new CalIdEventType { Id = _selectedMeetingTypeId, Length = 15 };
+
+            var slotStart = DateTimeOffset.Parse(_selectedSlot!.Time, CultureInfo.InvariantCulture);
+            var slotEnd = slotStart.AddMinutes(selectedType.Length);
+
+            var request = new BookMeetingRequest
+            {
+                StartTime = _selectedSlot.Time,
+                EndTime = slotEnd.ToString("yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture),
+                Duration = selectedType.Length,
+                EventTypeId = selectedType.Id,
+                Name = _name.Trim(),
+                Email = _workEmail.Trim(),
+                Notes = $"Company: {_companyName.Trim()}"
+            };
+
+            var result = await _calIdClient.BookMeetingAsync(request);
+
+            if (result.Success)
+            {
+                _successMessage = !string.IsNullOrWhiteSpace(result.Message)
+                    ? result.Message
+                    : $"Meeting scheduled successfully for {_name.Trim()} on {_selectedDate!.Value:yyyy-MM-dd} at {FormatSlotTime(_selectedSlot.Time)}!";
+
+                // Reset all form fields on success
+                _name = string.Empty;
+                _workEmail = string.Empty;
+                _companyName = string.Empty;
+                _selectedMeetingTypeId = 111709;
+                _selectedDate = null;
+                _selectedSlot = null;
+                _availableSlots = [];
+                _validationErrors.Clear();
+            }
+            else
+            {
+                _errorMessage = result.Error ?? "Failed to schedule the meeting. Please try again.";
+                // Note: on error, we keep entered form fields intact (do not clear them)
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"An error occurred while booking: {ex.Message}";
+        }
+        finally
+        {
+            _isSubmitting = false;
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose() => Nav.LocationChanged -= OnLocationChanged;
+}

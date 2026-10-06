@@ -1,0 +1,248 @@
+@*
+    Header.razor
+    ------------------------------------------------------------------------
+    The site header: Polypus logo on the left, navigation in the middle, a call
+    to action on the right, and a slide-down menu for small screens.
+
+    Navigation structure
+      Home
+      Product  (dropdown, opens on click - not hover, so it also works on touch)
+        - Workforce Overview
+            - Invoice Processing
+            - Order Confirmations
+            - Delivery Notes
+            - Order Management
+            - Build Your Own
+        - Skills
+      Platform   (dropdown)
+        - Platform
+        - Agents
+        - Integrations
+            - SAP / Coupa / Workday / xSuite Connectors
+      Resources  (wide dropdown with a highlight card)
+        - Blog, Webinars and Events, Podcast, Case Studies, Whitepapers, FAQ, API Docs
+      Company    (dropdown)
+        - About Us, Partners, Security, Careers
+      Help Center
+      Book a walkthrough  (call to action)
+
+    Why this component is interactive
+      The dropdown and the mobile menu need state, so the component declares
+      @rendermode InteractiveServer. Everything else on the site - including
+      all the page content - stays statically server rendered, which keeps the
+      pages fast and avoids a websocket for visitors who never open a menu.
+
+    How to change something
+      * Link lists (top level and inside the dropdown) come from
+        Services/NavigationCatalog.cs. Add an entry there and it appears here.
+      * To close the dropdown when the pointer leaves, add an onmouseleave
+        handler to the .nav__item wrapper.
+*@
+@rendermode InteractiveServer
+@inject NavigationManager Nav
+
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="/" @onclick="CloseAll" aria-label="Polypus home">
+            <BrandMark Size="36" Decorative="true" />
+            <span class="brand__text">
+                <span class="brand__name">Polypus</span>
+                <span class="brand__by">by Axonite</span>
+            </span>
+        </a>
+
+        <nav class="nav" aria-label="Main">
+            <a class="nav__link @(IsActive("/") ? "is-active" : null)" href="/" @onclick="CloseAll">Home</a>
+
+            @foreach (var menu in NavigationCatalog.HeaderMenu)
+            {
+                var entry = menu;
+                var isOpen = _openMenu == entry.Label;
+
+                <div class="nav__item">
+                    <button type="button"
+                            class="nav__trigger @(IsMenuSection(entry) ? "is-active" : null)"
+                            aria-expanded="@isOpen.ToString().ToLowerInvariant()"
+                            aria-haspopup="true"
+                            aria-controls="@MenuId(entry)"
+                            @onclick="() => ToggleMenu(entry.Label)"
+                            @onclick:stopPropagation="true">
+                        @entry.Label
+                        <span class="nav__chevron"><AppIcon Name="chevron-down" Size="15" /></span>
+                    </button>
+
+                    @if (isOpen)
+                    {
+                        <div id="@MenuId(entry)" class="dropdown @(entry.Wide ? "dropdown--wide" : null)" role="menu">
+                            @if (entry.Wide && entry.Highlight is not null)
+                            {
+                                <div class="dropdown__grid">
+                                    <a class="dropdown__card" role="menuitem" href="@entry.Highlight.Href" @onclick="CloseAll">
+                                        <span class="dropdown__card-badge"><AppIcon Name="star" Size="16" /></span>
+                                        <span class="dropdown__card-copy">@entry.Highlight.Label</span>
+                                    </a>
+
+                                    <div class="dropdown__list">
+                                        @foreach (var item in entry.Items)
+                                        {
+                                            <a class="dropdown__item" role="menuitem" href="@item.Href" @onclick="CloseAll">
+                                                <span class="dropdown__icon"><AppIcon Name="@item.Icon" Size="18" /></span>
+                                                <span>
+                                                    <span class="dropdown__label">@item.Label</span>
+                                                    <span class="dropdown__desc">@item.Description</span>
+                                                </span>
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                @foreach (var item in entry.Items)
+                                {
+                                    <a class="dropdown__item" role="menuitem" href="@item.Href" @onclick="CloseAll">
+                                        <span class="dropdown__icon"><AppIcon Name="@item.Icon" Size="18" /></span>
+                                        <span>
+                                            <span class="dropdown__label">@item.Label</span>
+                                            <span class="dropdown__desc">@item.Description</span>
+                                        </span>
+                                    </a>
+
+                                    @if (item.Children.Count > 0)
+                                    {
+                                        <div class="dropdown__sub">
+                                            @foreach (var child in item.Children)
+                                            {
+                                                <a class="dropdown__sub-item" role="menuitem" href="@child.Href" @onclick="CloseAll">@child.Label</a>
+                                            }
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+            }
+
+            <a class="nav__link @(IsActive("/help") ? "is-active" : null)"
+               href="/help" @onclick="CloseAll">Help Center</a>
+        </nav>
+
+        <div class="header-actions">
+            <a class="header-phone" href="mailto:@CompanyProfile.InfoEmail">@CompanyProfile.InfoEmail</a>
+            <a class="btn btn--primary btn--sm" href="/contact" @onclick="CloseAll">Book a walkthrough</a>
+
+            <button type="button"
+                    class="nav__toggle"
+                    aria-expanded="@_mobileOpen.ToString().ToLowerInvariant()"
+                    aria-controls="mobile-nav"
+                    aria-label="@(_mobileOpen ? "Close menu" : "Open menu")"
+                    @onclick="ToggleMobileMenu">
+                <AppIcon Name="@(_mobileOpen ? "close" : "menu")" Size="22" />
+            </button>
+        </div>
+    </div>
+
+    <div id="mobile-nav" class="container mobile-nav @(_mobileOpen ? "is-open" : null)">
+        <a class="mobile-nav__link" href="/" @onclick="CloseAll">Home</a>
+
+        @foreach (var menu in NavigationCatalog.HeaderMenu)
+        {
+            var entry = menu;
+
+            <div class="mobile-nav__group">
+                <div class="mobile-nav__row">
+                    <a class="mobile-nav__link mobile-nav__link--plain" href="@entry.Href" @onclick="CloseAll">@entry.Label</a>
+                    <button type="button"
+                            class="mobile-nav__expand"
+                            aria-expanded="@(_openMobileGroup == entry.Label).ToString().ToLowerInvariant()"
+                            aria-label="@($"Toggle {entry.Label} links")"
+                            @onclick="() => ToggleMobileGroup(entry.Label)">
+                        <AppIcon Name="chevron-down" Size="16" />
+                    </button>
+                </div>
+
+                @if (_openMobileGroup == entry.Label)
+                {
+                    <div class="mobile-nav__panel">
+                        @foreach (var item in entry.Items)
+                        {
+                            <a class="mobile-nav__link mobile-nav__link--sub" href="@item.Href" @onclick="CloseAll">@item.Label</a>
+
+                            @foreach (var child in item.Children)
+                            {
+                                <a class="mobile-nav__link mobile-nav__link--sub2" href="@child.Href" @onclick="CloseAll">@child.Label</a>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        <a class="mobile-nav__link" href="/help" @onclick="CloseAll">Help Center</a>
+        <a class="mobile-nav__link" href="/contact" @onclick="CloseAll">Contact</a>
+
+        <a class="btn btn--primary btn--block" href="/contact" @onclick="CloseAll">Book a walkthrough</a>
+    </div>
+</header>
+
+@if (_openMenu is not null)
+{
+    @* Invisible full-screen button: clicking anywhere else closes the dropdown. *@
+    <button type="button" class="nav__scrim" tabindex="-1" aria-hidden="true" @onclick="CloseProductMenu"></button>
+}
+
+@code {
+    /// <summary>Label of the open desktop dropdown, or null when all are closed.</summary>
+    private string? _openMenu;
+
+    /// <summary>Label of the expanded mobile accordion group, or null.</summary>
+    private string? _openMobileGroup;
+
+    private bool _mobileOpen;
+
+    protected override void OnInitialized()
+    {
+        // Close any open menu when the user navigates, including via the browser buttons.
+        Nav.LocationChanged += (_, _) => CloseAll();
+    }
+
+    private void ToggleMenu(string label)
+    {
+        _openMenu = _openMenu == label ? null : label;
+        _mobileOpen = false;
+    }
+
+    private void ToggleMobileMenu()
+    {
+        _mobileOpen = !_mobileOpen;
+        _openMenu = null;
+    }
+
+    private void ToggleMobileGroup(string label) =>
+        _openMobileGroup = _openMobileGroup == label ? null : label;
+
+    private void CloseProductMenu() => _openMenu = null;
+
+    private void CloseAll()
+    {
+        _openMenu = null;
+        _mobileOpen = false;
+    }
+
+    /// <summary>Stable id for a menu panel, e.g. "menu-resources".</summary>
+    private static string MenuId(NavMenu menu) =>
+        "menu-" + menu.Label.Replace(" ", "-").ToLowerInvariant();
+
+    /// <summary>True when the current URL is exactly the given path.</summary>
+    private bool IsActive(string path)
+    {
+        var current = "/" + Nav.ToBaseRelativePath(Nav.Uri).Split('?')[0].TrimEnd('/');
+        return string.Equals(current, path, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>Highlights a trigger while the visitor is anywhere in that menu's section.</summary>
+    private bool IsMenuSection(NavMenu menu) =>
+        IsActive(menu.Href)
+        || menu.Items.Any(item => IsActive(item.Href) || item.Children.Any(child => IsActive(child.Href)));
+}

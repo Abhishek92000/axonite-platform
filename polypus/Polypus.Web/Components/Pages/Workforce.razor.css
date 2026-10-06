@@ -1,0 +1,353 @@
+/* ============================================================================
+   Polypus - Workforce.razor.css
+   ----------------------------------------------------------------------------
+   Scoped styles for the /workforce page. Mirrors the reference page structure
+   (hero, three feature rows, bundle grid, Build Your Own band, scale band)
+   using the Polypus design tokens from app.css.
+
+   Sections:
+     1. Hero and flow diagram
+     2. Feature rows
+     3. Workforce bundles
+     4. Build Your Own
+     5. Scale band
+     6. Responsive
+   ========================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Hero and flow diagram
+   --------------------------------------------------------------------------- */
+.wf-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--s-8) var(--s-9);
+    border-top: 0;
+}
+
+.wf-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(60rem 30rem at 88% -10%, rgba(15, 118, 110, 0.1), transparent 60%),
+        radial-gradient(40rem 24rem at 8% 0%, rgba(198, 158, 78, 0.1), transparent 62%);
+    pointer-events: none;
+}
+
+.wf-hero .container { position: relative; }
+
+.wf-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: var(--s-8);
+    align-items: center;
+}
+
+.wf-hero__title { max-width: 14ch; }
+
+.wf-hero__copy {
+    margin-top: var(--s-5);
+    max-width: 56ch;
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    line-height: 1.65;
+}
+
+.wf-flow {
+    display: grid;
+    gap: 0.85rem;
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-3);
+}
+
+.wf-flow__step {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+}
+
+.wf-flow__step--accent {
+    border-color: transparent;
+    background: var(--accent-soft);
+}
+
+.wf-flow__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: none;
+    border-radius: var(--r-full);
+    background: var(--white);
+    color: var(--accent);
+    box-shadow: var(--sh-1);
+}
+
+.wf-flow__kicker {
+    display: block;
+    color: var(--ink-3);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.wf-flow__label {
+    display: block;
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.wf-flow__line {
+    height: 1px;
+    margin-inline: auto;
+    width: 2px;
+    height: 1.1rem;
+    background: var(--line);
+}
+
+/* ---------------------------------------------------------------------------
+   2. Feature rows
+   --------------------------------------------------------------------------- */
+.wf-feature {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--s-8);
+    align-items: center;
+}
+
+.wf-feature + .wf-feature { margin-top: var(--s-8); }
+
+.wf-feature--reverse .wf-feature__copy { order: 2; }
+
+.wf-feature__kicker {
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.wf-feature__title {
+    margin: 0.5rem 0 0.75rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.1rem);
+    letter-spacing: -0.015em;
+}
+
+.wf-feature__copy {
+    max-width: 46ch;
+    color: var(--ink-2);
+    line-height: 1.65;
+}
+
+.wf-feature__action { margin-top: var(--s-5); }
+
+.wf-diagram {
+    display: grid;
+    gap: 0.6rem;
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: linear-gradient(160deg, var(--paper-alt), var(--white));
+}
+
+.wf-diagram__node {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--white);
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.wf-diagram__node svg { color: var(--accent); flex: none; }
+
+.wf-diagram__node--hub {
+    border-color: transparent;
+    background: var(--dark);
+    color: var(--ink-inverse);
+    font-weight: 600;
+}
+
+.wf-diagram__node--hub svg { color: var(--accent-bright); }
+
+/* ---------------------------------------------------------------------------
+   3. Workforce bundles
+   --------------------------------------------------------------------------- */
+.wf-bundles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-5);
+}
+
+.wf-card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.wf-card:hover {
+    border-color: #d3cec4;
+    box-shadow: var(--sh-2);
+    transform: translateY(-2px);
+}
+
+.wf-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: var(--s-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    color: var(--accent);
+}
+
+.wf-card__title {
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.wf-card__text {
+    margin-bottom: var(--s-5);
+    color: var(--ink-3);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.wf-card__action { margin-top: auto; }
+
+.wf-card--soon { opacity: 0.72; }
+.wf-card--soon:hover { transform: none; box-shadow: var(--sh-1); }
+
+.wf-card__soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--ink-3);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.wf-card__soon .badge-dot { background: var(--ink-3); }
+
+/* ---------------------------------------------------------------------------
+   4. Build Your Own
+   --------------------------------------------------------------------------- */
+.wf-build {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-7);
+    align-items: center;
+    padding: var(--s-8);
+    border-radius: var(--r-lg, var(--r-md));
+    background: var(--dark);
+    color: var(--ink-inverse-2);
+}
+
+.wf-build h2 {
+    color: var(--ink-inverse);
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.1rem);
+    letter-spacing: -0.015em;
+}
+
+.wf-build p { margin-top: 0.6rem; max-width: 48ch; }
+
+.wf-build__points {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.4rem;
+    margin-top: var(--s-5);
+    padding: 0;
+    list-style: none;
+    color: var(--ink-inverse);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.wf-build__points li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.wf-build__points svg { color: var(--accent-bright); }
+
+.wf-build__action { justify-self: end; }
+
+/* ---------------------------------------------------------------------------
+   5. Scale band
+   --------------------------------------------------------------------------- */
+.wf-scale {
+    display: grid;
+    gap: var(--s-5);
+    justify-items: center;
+    text-align: center;
+}
+
+.wf-scale h2 {
+    max-width: 22ch;
+    font-family: var(--font-serif);
+    font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.4rem);
+    letter-spacing: -0.02em;
+}
+
+.wf-scale p {
+    max-width: 68ch;
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ---------------------------------------------------------------------------
+   6. Responsive
+   --------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+    .wf-hero__inner,
+    .wf-feature { grid-template-columns: minmax(0, 1fr); }
+
+    .wf-feature--reverse .wf-feature__copy { order: 0; }
+
+    .wf-bundles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+    .wf-bundles { grid-template-columns: minmax(0, 1fr); }
+
+    .wf-build {
+        grid-template-columns: minmax(0, 1fr);
+        padding: var(--s-7) var(--s-6);
+    }
+
+    .wf-build__action {
+        justify-self: start;
+        width: 100%;
+    }
+
+    .wf-build__action .btn { width: 100%; }
+}

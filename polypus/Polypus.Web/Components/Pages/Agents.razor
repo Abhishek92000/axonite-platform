@@ -1,0 +1,236 @@
+@page "/agents"
+@rendermode InteractiveServer
+@*
+    Agents.razor - route /agents
+    ------------------------------------------------------------------------
+    A faithful build of the reference Agents page, using Polypus branding:
+
+      1. Hero "Agents built to solve tasks, not become one"
+      2. How agents work - Collaborate / Reason / Use tools
+      3. The Agentic GBS Workforce - the seven reference bundles, with the
+         not-yet-available ones marked "Coming soon"
+      4. Build Your Own band with the three reference tags
+      5. The four reference questions, using the shared FaqList accordion
+
+    Copy is carried verbatim from the reference; only the brand name is swapped
+    (Hypatos -> Polypus). Styles live in Agents.razor.css and use the Polypus
+    design tokens, so nothing here copies the reference theme.
+
+    Linked from: the header "Platform" menu and /workforce.
+*@
+
+<PageTitle>Agents - Polypus Platform</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="Digital coworkers that reason about their task, use tools and collaborate to run a process step." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section ag-hero">
+    <div class="container">
+        <div class="ag-hero__inner">
+            <p class="eyebrow">Polypus GBS Agents</p>
+            <h1 class="display ag-hero__title">Agents built to solve tasks, not become one</h1>
+            <p class="ag-hero__copy">
+                Our GBS Agents are specialists in business support. They understand language and
+                nuance like people, then reason and act on your transactional layer.
+            </p>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. How agents work
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="How agents work"
+                       Title="What every agent does, every time" />
+
+        <div class="ag-features mt-7">
+            @foreach (var feature in Features)
+            {
+                <article class="ag-feature">
+                    <span class="ag-feature__icon"><AppIcon Name="@feature.Icon" Size="22" /></span>
+                    <h3 class="ag-feature__title">@feature.Title</h3>
+                    <p class="ag-feature__text">@feature.Text</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. The Agentic GBS Workforce
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <SectionHeading Eyebrow="The Agentic GBS Workforce"
+                       Title="Agents working together to form a GBS Workforce"
+                       Description="Explore our pre-packaged Workforce bundles, specifically designed for the most common GBS scenarios." />
+
+        <div class="ag-primary mt-7">
+            @foreach (var bundle in PrimaryBundles)
+            {
+                <article class="ag-card">
+                    <span class="ag-card__icon"><AppIcon Name="@bundle.Icon" Size="20" /></span>
+                    <div>
+                        <h3 class="ag-card__title">@bundle.Title</h3>
+                        <p class="ag-card__text">@bundle.Text</p>
+
+                        @if (bundle.Href is not null)
+                        {
+                            <a class="link-arrow mt-2" href="@bundle.Href">
+                                Open
+                                <AppIcon Name="arrow-right" Size="14" />
+                            </a>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+
+        <div class="ag-secondary">
+            @foreach (var bundle in SecondaryBundles)
+            {
+                <article class="ag-card @(bundle.Href is null ? "ag-card--soon" : null)">
+                    <span class="ag-card__icon"><AppIcon Name="@bundle.Icon" Size="20" /></span>
+                    <div>
+                        <h3 class="ag-card__title">@bundle.Title</h3>
+                        <p class="ag-card__text">@bundle.Text</p>
+
+                        @if (bundle.Href is not null)
+                        {
+                            <a class="link-arrow mt-2" href="@bundle.Href">
+                                Open
+                                <AppIcon Name="arrow-right" Size="14" />
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="ag-card__soon">
+                                <span class="badge-dot"></span>
+                                Coming soon
+                            </span>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Build Your Own
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="ag-build">
+            <div>
+                <h2>Build Your Own</h2>
+                <p>Define the process and skills your operation needs. We'll staff agents equipped to run them.</p>
+
+                <div class="ag-tags">
+                    @foreach (var tag in BuildTags)
+                    {
+                        <span class="ag-tag">
+                            <AppIcon Name="check" Size="13" />
+                            @tag
+                        </span>
+                    }
+                </div>
+            </div>
+
+            <div class="ag-build__action">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Talk to us
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Frequently Asked Questions
+   ========================================================================== *@
+<section class="section">
+    <div class="container container--narrow">
+        <SectionHeading Eyebrow="Questions" Title="Frequently Asked Questions" Align="center" />
+        <FaqList Items="Questions" CssClass="mt-7" />
+    </div>
+</section>
+
+@code {
+    private sealed record Feature(string Title, string Text, string Icon);
+
+    private static readonly Feature[] Features =
+    [
+        new("Collaborate", "Agents work together, validating decisions, handling exceptions, and escalating to each other, or when needed, to a human.", "users"),
+        new("Reason", "Each agentic decision is backed by clear reasoning, enabling full traceability and audit readiness.", "sparkle"),
+        new("Use tools", "Agents access databases, coding libraries, handbooks, and integrations to complete work without system re-engineering.", "plug")
+    ];
+
+    private sealed record Bundle(string Title, string Text, string Icon, string? Href);
+
+    private static readonly Bundle[] PrimaryBundles =
+    [
+        new("Invoice Processing", "A workforce that captures, codes, matches and validates every invoice.", "scan", "/workforce/invoice-processing"),
+        new("Order Confirmations", "A workforce catching and matching every line, price, and quantity.", "check-circle", "/workforce/order-confirmations"),
+        new("Delivery Notes", "A workforce turning delivery notes into validated receipts.", "layers", "/workforce/delivery-notes"),
+        new("Order Management", "A workforce validating sales orders against catalogue, pricing, volume.", "flow", "/workforce/order-management")
+    ];
+
+    private static readonly Bundle[] SecondaryBundles =
+    [
+        new("Dunning Letters", "A workforce that captures, matches and resolves every dunning letter.", "mail", null),
+        new("Cash Application", "A workforce that matches incoming payments to open receivables.", "chart", null),
+        new("Contract Accounting", "A workforce that keeps contract terms and postings aligned.", "building", null)
+    ];
+
+    private static readonly string[] BuildTags =
+    [
+        "Custom workflows",
+        "Process-specific skills",
+        "Tailored agents"
+    ];
+
+    private static readonly IReadOnlyList<Faq> Questions =
+    [
+        new Faq
+        {
+            Category = "Agents",
+            Question = "What is a Polypus agent?",
+            Answer = "A Polypus agent is a digital coworker that runs a step within a process or a " +
+                     "workflow. An agent reasons about its task, uses tools, accesses core systems " +
+                     "and master data, and collaborates with the other agents within a workforce."
+        },
+        new Faq
+        {
+            Category = "Agents",
+            Question = "How do agents work together?",
+            Answer = "Each agent owns a step and hands the case to the next with full context, " +
+                     "forming a workforce for the whole process. The handoffs keep the context of " +
+                     "each case intact from step to step."
+        },
+        new Faq
+        {
+            Category = "Agents",
+            Question = "How autonomous are agents?",
+            Answer = "Autonomy is a configuration choice. Each agent operates within a defined " +
+                     "harness: what it may complete on its own and where it stops and asks, what " +
+                     "context it has access to. Exceptions and approvals reach a human owner."
+        },
+        new Faq
+        {
+            Category = "Agents",
+            Question = "Can we build our own agents?",
+            Answer = "Yes. You can get builder access to the Polypus platform to create your own " +
+                     "agents to classify, extract and enrich documents, supported by the same " +
+                     "supervision model and controls as the out-of-the-box workforce bundles."
+        }
+    ];
+}
+

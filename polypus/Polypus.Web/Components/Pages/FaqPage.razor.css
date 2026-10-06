@@ -1,0 +1,204 @@
+/* ============================================================================
+   Polypus - FaqPage.razor.css
+   ----------------------------------------------------------------------------
+   Scoped styles for /faq. Mirrors the reference FAQ page (hero, sticky table of
+   contents, grouped questions with connector sub-sections, CTA) using the
+   Polypus design tokens from app.css.
+
+   Sections:
+     1. Hero
+     2. Layout and table of contents
+     3. Groups and questions
+     4. Responsive
+   ========================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Hero
+   --------------------------------------------------------------------------- */
+.fq-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--s-8) var(--s-8);
+    border-top: 0;
+}
+
+.fq-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(56rem 28rem at 50% -18%, rgba(15, 118, 110, 0.12), transparent 62%),
+        radial-gradient(36rem 22rem at 8% 6%, rgba(198, 158, 78, 0.1), transparent 60%);
+    pointer-events: none;
+}
+
+.fq-hero .container { position: relative; }
+
+.fq-hero__inner {
+    max-width: 64ch;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.fq-hero__copy {
+    margin-top: var(--s-4);
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Layout and table of contents
+   --------------------------------------------------------------------------- */
+.fq-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: var(--s-8);
+    align-items: start;
+}
+
+.fq-toc {
+    position: sticky;
+    top: calc(var(--header-h) + var(--s-5));
+    padding: var(--s-5);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+}
+
+.fq-toc__title {
+    margin-bottom: var(--s-4);
+    color: var(--ink-3);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+}
+
+.fq-toc__list {
+    display: grid;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fq-toc__link {
+    display: block;
+    padding: 0.45rem 0.6rem;
+    border-radius: var(--r-xs);
+    color: var(--ink-2);
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+.fq-toc__link:hover {
+    background: var(--paper-alt);
+    color: var(--ink);
+}
+
+/* ---------------------------------------------------------------------------
+   3. Groups and questions
+   --------------------------------------------------------------------------- */
+.fq-main { display: grid; gap: var(--s-8); }
+
+.fq-group__title {
+    padding-bottom: 0.7rem;
+    margin-bottom: var(--s-5);
+    border-bottom: 2px solid var(--accent);
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+}
+
+.fq-sub { margin-top: var(--s-6); }
+
+.fq-sub__title {
+    margin-bottom: var(--s-3);
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.fq-item {
+    border-bottom: 1px solid var(--line-soft);
+}
+
+.fq-item__q {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--s-4);
+    width: 100%;
+    padding: 0.9rem 0.2rem;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: left;
+    cursor: pointer;
+}
+
+.fq-item__q:hover { color: var(--accent); }
+
+.fq-item__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 26px;
+    height: 26px;
+    margin-top: 1px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-full);
+    background: var(--white);
+    color: var(--ink-3);
+    transition: transform 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.fq-item.is-open .fq-item__icon {
+    transform: rotate(180deg);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.fq-item__a {
+    padding: 0 0.2rem 1.1rem;
+    max-width: 74ch;
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+.fq-item__a p { margin-bottom: 0.75rem; }
+
+.fq-item__a ul {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0.5rem 0 0;
+    padding-left: 1.1rem;
+}
+
+.fq-item__a li::marker { color: var(--accent); }
+
+/* ---------------------------------------------------------------------------
+   4. Responsive
+   --------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+    .fq-layout { grid-template-columns: minmax(0, 1fr); }
+
+    .fq-toc { position: static; }
+
+    .fq-toc__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+    .fq-toc__list { grid-template-columns: minmax(0, 1fr); }
+}

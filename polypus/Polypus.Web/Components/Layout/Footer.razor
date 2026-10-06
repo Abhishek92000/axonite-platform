@@ -1,0 +1,88 @@
+@*
+    Footer.razor
+    ------------------------------------------------------------------------
+    The site footer, in three bands:
+
+      1. Brand block       - logo, one-line description of Polypus, social links
+      2. Four link columns - Product / Company / Resources / Legal
+      3. Meta row          - copyright, legal links, live status chip
+      4. Small print       - company registration details
+
+    The Help Center, Privacy Policy and Terms of Service links the brief asked
+    for all live in the Resources and Legal columns.
+
+    How to change something
+      * Columns and links -> Services/NavigationCatalog.cs (FooterColumns)
+      * Contact details   -> Models/CompanyProfile.cs
+      * Layout            -> wwwroot/app.css, section 8 "Footer"
+*@
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a class="brand" href="/" aria-label="Polypus home">
+                    <BrandMark Size="34" Decorative="true" />
+                    <span class="brand__text">
+                        <span class="brand__name">Polypus</span>
+                        <span class="brand__by">by Axonite</span>
+                    </span>
+                </a>
+
+                <p>@ProductProfile.Positioning. Read the documents your suppliers actually send, then post them into SAP through automations you can audit.</p>
+
+                <div class="footer-social">
+                    <a href="@CompanyProfile.Website" aria-label="Axonite website" target="_blank" rel="noopener">
+                        <AppIcon Name="globe" Size="17" />
+                    </a>
+                    <a href="mailto:@CompanyProfile.SalesEmail" aria-label="Email the Polypus team">
+                        <AppIcon Name="mail" Size="17" />
+                    </a>
+                    <a href="tel:@PhoneHref" aria-label="Call the Polypus team">
+                        <AppIcon Name="phone" Size="17" />
+                    </a>
+                </div>
+            </div>
+
+            <nav class="footer-columns" aria-label="Footer">
+                @foreach (var column in NavigationCatalog.FooterColumns)
+                {
+                    <div class="footer-col">
+                        <h3>@column.Title</h3>
+                        <ul>
+                            @foreach (var link in column.Links)
+                            {
+                                <li><a href="@link.Href">@link.Label</a></li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </nav>
+        </div>
+
+        <div class="footer-meta">
+            <span>&copy; @DateTime.UtcNow.Year @CompanyProfile.LegalName. All rights reserved.</span>
+
+            <span class="footer-meta__links">
+                <a href="/privacy-policy">Privacy Policy</a>
+                <a href="/terms-of-service">Terms of Service</a>
+                <a href="/cookie-policy">Cookie Policy</a>
+                <a href="/data-processing">Data Processing</a>
+            </span>
+
+            <span class="status-chip">
+                <span class="badge-dot"></span>
+                All systems operational
+            </span>
+        </div>
+
+        <p class="footer-note">
+            Polypus is a product of @CompanyProfile.LegalName. @CompanyProfile.RegistrationNote.
+            SAP, SAP S/4HANA, Ariba and Fieldglass are trademarks of SAP SE. 
+        </p>
+    </div>
+</footer>
+
+@code {
+    private static string PhoneHref => CompanyProfile.Phone.Replace(" ", string.Empty);
+}

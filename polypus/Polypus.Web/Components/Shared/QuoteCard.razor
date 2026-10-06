@@ -1,0 +1,63 @@
+@*
+    QuoteCard.razor
+    ------------------------------------------------------------------------
+    A testimonial card. One of the five testimonials in the collection is marked
+    IsFeatured and rendered with the darker "featured" treatment plus its
+    headline metric; the rest use the compact white card.
+
+    Used by Components/Pages/Home.razor and the /company page.
+
+    How to change something
+      * The quotes themselves live in Services/TestimonialCatalog.cs. Set
+        IsFeatured = true on exactly one entry.
+      * Card styling lives in wwwroot/home.css under "Testimonials".
+*@
+
+@if (Testimonial.IsFeatured)
+{
+    <figure class="quote-featured">
+        <span class="quote-featured__mark" aria-hidden="true">&ldquo;</span>
+        <blockquote>@Testimonial.Quote</blockquote>
+
+        <div class="metric">
+            <div class="metric__value">@Testimonial.Metric</div>
+            <div class="metric__label">@Testimonial.MetricLabel</div>
+        </div>
+
+        <figcaption>
+            <span class="avatar avatar--dark" aria-hidden="true">@Testimonial.Initials</span>
+            <span>
+                <span class="quote__name">@Testimonial.Author</span>
+                <span class="quote__role">@Testimonial.Role, @Testimonial.Company</span>
+            </span>
+        </figcaption>
+    </figure>
+}
+else
+{
+    <figure class="quote-card">
+        <div class="quote-card__top">
+            <span class="pill pill--accent">@Testimonial.Sector</span>
+            <span class="quote-card__metric">
+                <b>@Testimonial.Metric</b>
+                <span>@Testimonial.MetricLabel</span>
+            </span>
+        </div>
+
+        <blockquote>@Testimonial.Quote</blockquote>
+
+        <figcaption>
+            <span class="avatar avatar--sm" aria-hidden="true">@Testimonial.Initials</span>
+            <span>
+                <span class="quote__name">@Testimonial.Author</span>
+                <span class="quote__role">@Testimonial.Role, @Testimonial.Company</span>
+            </span>
+        </figcaption>
+    </figure>
+}
+
+@code {
+    /// <summary>The testimonial to render.</summary>
+    [Parameter, EditorRequired]
+    public Testimonial Testimonial { get; set; } = default!;
+}

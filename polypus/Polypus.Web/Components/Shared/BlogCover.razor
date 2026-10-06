@@ -1,0 +1,54 @@
+@*
+    BlogCover.razor
+    ------------------------------------------------------------------------
+    A blog card's cover art.
+
+    The reference cards each carry a cover image. Those images live on the
+    reference site's CDN, so they can fail to load (offline, blocked, removed).
+    This component therefore layers a category-tinted gradient plate behind the
+    image: if the image loads it covers the plate, and if it does not the card
+    still looks deliberate rather than broken.
+
+    Parameters
+      * Post  - the article whose cover should be shown.
+      * Class - wrapper class from the calling page ("blg-cover", ...).
+*@
+
+<div class="@Class @PlateClass($"blg-cover--{Post.Category}")">
+    @if (!string.IsNullOrWhiteSpace(Post.Image))
+    {
+        <img src="@Post.Image"
+             alt="@Post.Title"
+             loading="lazy"
+             decoding="async"
+             @onerror="OnImageError"
+             style="@(_failed ? "display:none" : null)" />
+    }
+
+    @if (string.IsNullOrWhiteSpace(Post.Image) || _failed)
+    {
+        <span class="blg-cover__fallback" aria-hidden="true">
+            <span class="blg-cover__initial">@Initial</span>
+        </span>
+    }
+</div>
+
+@code {
+    /// <summary>The article to draw a cover for.</summary>
+    [Parameter, EditorRequired]
+    public BlogPost Post { get; set; } = default!;
+
+    /// <summary>Wrapper class supplied by the page.</summary>
+    [Parameter]
+    public string Class { get; set; } = "blg-cover";
+
+    /// <summary>True once the remote cover has failed to load.</summary>
+    private bool _failed;
+
+    /// <summary>First letter of the title, used on the fallback plate.</summary>
+    private string Initial => string.IsNullOrWhiteSpace(Post.Title) ? "P" : Post.Title.Trim()[..1].ToUpperInvariant();
+
+    private void OnImageError() => _failed = true;
+
+    private static string PlateClass(string extra) => extra;
+}

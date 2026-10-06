@@ -1,0 +1,119 @@
+@page "/terms-of-service"
+@*
+    TermsOfService.razor  -  route /terms-of-service
+    ------------------------------------------------------------------------
+    Terms of Service. Structure comes from Components/Shared/LegalDocument.razor;
+    only the content lives here.
+
+    This is a realistic starting draft, not legal advice. Have counsel review
+    before publishing, and replace the bracketed jurisdiction with the correct
+    governing law for your entity.
+
+    Linked from: the footer meta row and the footer "Legal" column.
+*@
+
+<PageTitle>Polypus Terms of Service</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="The terms that govern your use of the Polypus website and the Polypus intelligent document processing and SAP automation service, provided by Axonite." />
+</HeadContent>
+
+<PageHero Section="Terms of Service"
+          Eyebrow="Legal"
+          Title="Terms of Service"
+          Lead="The terms that govern your use of this website and the Polypus document processing service." />
+
+<section class="section section--flush">
+    <div class="container">
+        <LegalDocument Updated="12 June 2025" Intro="@Intro" Sections="_sections" />
+    </div>
+</section>
+
+@code {
+    private const string Intro =
+        "These terms apply to your use of this website and, where a signed order form exists, to " +
+        "your use of the Polypus service. If an order form or master services agreement between you " +
+        "and Axonite conflicts with these terms, the signed document prevails.";
+
+    private static readonly IReadOnlyList<LegalSection> _sections =
+    [
+        new LegalSection("agreement", "The agreement",
+        [
+            $"{CompanyProfile.LegalName} provides the Polypus service. By using this website or the service you agree to these terms. If you are agreeing on behalf of an organisation, you confirm you have authority to bind it."
+        ]),
+
+        new LegalSection("service", "The service",
+        [
+            "Polypus reads documents, extracts structured data, applies the validation rules configured in your tenant, and writes approved documents into your SAP system through supported interfaces.",
+            "We may update, improve or replace features. We will not materially reduce the core functionality of a paid plan during a paid term without your written agreement, and we will give at least 30 days' notice of any change that requires action from you."
+        ]),
+
+        new LegalSection("your-obligations", "Your obligations",
+        [
+            "You are responsible for what you send us and for the configuration you apply to it."
+        ])
+        {
+            Bullets =
+            [
+                "Only submit documents you are lawfully entitled to process",
+                "Keep administrator accounts and connector credentials secure, and tell us promptly if one is compromised",
+                "Configure validation rules and tolerances that reflect your own financial control requirements",
+                "Do not use the service to send unlawful content, to attack third-party systems, or to attempt to access another tenant's data",
+                "Provide accurate information in the contact form and in any order form"
+            ]
+        },
+
+        new LegalSection("plans-and-billing", "Plans, volume and billing",
+        [
+            "Plans are priced on document volume, entity count and term as set out on the pricing page and in your order form. Document volumes are counted per tenant per calendar month and unused volume does not roll over.",
+            "Annual pricing requires a 12-month term paid up front. Upgrades are pro-rated from the date of change. Downgrades take effect at the end of the current term. Overage is billed monthly at the rate published for your plan.",
+            "Invoices are due 30 days from issue unless the order form says otherwise. Prices exclude applicable taxes, duties and withholding."
+        ]),
+
+        new LegalSection("customer-data", "Customer data and intellectual property",
+        [
+            "You own your documents and the data extracted from them. We process them on your instructions as described in the Data Processing Addendum.",
+            "We own the Polypus software, models, documentation, interfaces and everything we built to deliver the service. Nothing in these terms transfers ownership of our intellectual property to you.",
+            "You grant us a limited licence to process your documents solely to provide and support the service. We do not use your documents to train models shared with other tenants."
+        ]),
+
+        new LegalSection("warranties", "Warranties and service levels",
+        [
+            "We warrant that we will provide the service with reasonable skill and care, and that the extraction accuracy we report is measured as described in our published methodology.",
+            "Uptime commitments are set out in the service level schedule for Business and Enterprise plans. Where we miss a committed service level, the remedy is a service credit as defined in that schedule.",
+            "Automated postings are subject to the validation rules you configure. You remain responsible for the financial accuracy of documents posted into your SAP system."
+        ]),
+
+        new LegalSection("liability", "Limitation of liability",
+        [
+            "To the maximum extent permitted by law, neither party is liable for indirect or consequential loss, loss of profit, loss of anticipated savings, or loss of business opportunity.",
+            "Our total aggregate liability arising out of or in connection with the agreement is limited to the fees paid or payable by you in the 12 months preceding the event giving rise to the claim.",
+            "Nothing in these terms limits liability for death or personal injury caused by negligence, fraud, or any other liability that cannot lawfully be limited."
+        ]),
+
+        new LegalSection("term-and-termination", "Term and termination",
+        [
+            "The agreement runs for the term stated in the order form and renews for successive equal terms unless either party gives 60 days' written notice of non-renewal.",
+            "Either party may terminate immediately for material breach that is not remedied within 30 days of written notice, or on insolvency of the other party.",
+            "On termination we make your extracted data available for export for 30 days, then delete it in line with the retention settings in your tenant and the Data Processing Addendum."
+        ]),
+
+        new LegalSection("website-use", "Use of this website",
+        [
+            "The content on this website is provided for general information. Plan details, document coverage, performance figures and customer references are illustrative and do not form part of any contract unless expressly incorporated into a signed order form.",
+            "You may not scrape, mirror or republish this website's content without written permission, and you may not use our branding in a way that suggests partnership or endorsement."
+        ]),
+
+        new LegalSection("governing-law", "Governing law",
+        [
+            "These terms are governed by the laws of [jurisdiction], and the courts of [jurisdiction] have exclusive jurisdiction, without affecting any mandatory consumer protections in your country of residence.",
+            "Before commencing proceedings, both parties agree to attempt in good faith to resolve the dispute through senior representatives over a 30-day period."
+        ]),
+
+        new LegalSection("contact", "Questions about these terms",
+        [
+            "Write to legal@axonite.io or to our registered office. We aim to respond to contractual questions within five business days."
+        ])
+    ];
+}

@@ -1,0 +1,137 @@
+@page "/faq"
+@rendermode InteractiveServer
+@*
+    FaqPage.razor - route /faq
+    ------------------------------------------------------------------------
+    A faithful build of the reference FAQ page, using Polypus branding:
+
+      1. Hero "Frequently Asked Questions"
+      2. A sticky table of contents (one entry per group)
+      3. The eight question groups, with connector sub-sections where the
+         reference has them, as an accordion
+
+    Content comes from Services/FaqPageCatalog.cs. Copy is carried from the
+    reference with the brand name swapped (Hypatos -> Polypus). Styles live in
+    FaqPage.razor.css and use the Polypus design tokens.
+*@
+
+<PageTitle>Frequently Asked Questions - Polypus</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="Answers to commonly asked questions about the Polypus platform, its workforce, skills, integrations and pricing." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section fq-hero">
+    <div class="container">
+        <div class="fq-hero__inner">
+            <h1 class="display">Frequently Asked Questions</h1>
+            <p class="fq-hero__copy">
+                Welcome to our FAQ page, your go-to resource for answers to commonly asked
+                questions about Polypus.
+            </p>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. Table of contents and groups
+   ========================================================================== *@
+<section class="section section--flush">
+    <div class="container">
+        <div class="fq-layout">
+            <nav class="fq-toc" aria-label="Table of contents">
+                <p class="fq-toc__title">Table of Contents</p>
+                <ul class="fq-toc__list">
+                    @foreach (var group in FaqPageCatalog.Groups)
+                    {
+                        <li>
+                            <a class="fq-toc__link" href="@($"#{Slug(group.Title)}")">@group.Title</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+
+            <div class="fq-main">
+                @foreach (var group in FaqPageCatalog.Groups)
+                {
+                    <section class="fq-group" id="@Slug(group.Title)">
+                        <h2 class="fq-group__title">@group.Title</h2>
+
+                        @foreach (var sub in group.Subs)
+                        {
+                            <div class="fq-sub">
+                                @if (!string.IsNullOrWhiteSpace(sub.SubTitle))
+                                {
+                                    <h3 class="fq-sub__title">@sub.SubTitle</h3>
+                                }
+
+                                @foreach (var item in sub.Items)
+                                {
+                                    var key = $"{Slug(group.Title)}::{sub.SubTitle}::{item.Question}";
+                                    var isOpen = _open == key;
+
+                                    <div class="fq-item @(isOpen ? "is-open" : null)">
+                                        <button type="button"
+                                                class="fq-item__q"
+                                                aria-expanded="@(isOpen ? "true" : "false")"
+                                                @onclick="() => Toggle(key)">
+                                            <span>@item.Question</span>
+                                            <span class="fq-item__icon"><AppIcon Name="chevron-down" Size="15" /></span>
+                                        </button>
+
+                                        @if (isOpen)
+                                        {
+                                            <div class="fq-item__a">
+                                                @foreach (var paragraph in item.Paragraphs)
+                                                {
+                                                    <p>@paragraph</p>
+                                                }
+
+                                                @if (item.Bullets.Count > 0)
+                                                {
+                                                    <ul>
+                                                        @foreach (var bullet in item.Bullets)
+                                                        {
+                                                            <li>@bullet</li>
+                                                        }
+                                                    </ul>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </section>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>Composite key of the expanded question, or null when all are collapsed.</summary>
+    private string? _open;
+
+    private void Toggle(string key) => _open = _open == key ? null : key;
+
+    /// <summary>Turns a group title into a URL-safe anchor, e.g. "Product & Platform Basics".</summary>
+    private static string Slug(string text)
+    {
+        var chars = text.ToLowerInvariant()
+            .Select(c => char.IsLetterOrDigit(c) ? c : '-')
+            .ToArray();
+
+        // Collapse runs of dashes produced by spaces and punctuation.
+        var slug = new string(chars);
+        while (slug.Contains("--"))
+        {
+            slug = slug.Replace("--", "-");
+        }
+
+        return slug.Trim('-');
+    }
+}

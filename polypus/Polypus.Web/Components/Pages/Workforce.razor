@@ -1,0 +1,300 @@
+@page "/workforce"
+@rendermode InteractiveServer
+@*
+    Workforce.razor - route /workforce
+    ------------------------------------------------------------------------
+    A faithful build of the reference Workforce page, using Polypus branding:
+
+      1. Hero with the "not tools, a workforce" statement plus a small
+         Select -> Deploy -> Get flow diagram
+      2. Three feature rows - Skills, Agents, Workforce - each with a button
+         to its page
+      3. The workforce bundles grid (Invoice Processing ... Contract Accounting),
+         with the not-yet-available bundles marked "Coming soon"
+      4. Build Your Own band
+      5. The "can help you scale" statement
+      6. The five reference questions, using the shared FaqList accordion
+
+    Copy is carried verbatim from the reference; only the brand name is swapped
+    (Hypatos -> Polypus). Styling is scoped in Workforce.razor.css and uses the
+    Polypus design tokens, so nothing here copies the reference theme.
+
+    Linked from: the header "Workforce" menu.
+*@
+
+<PageTitle>Workforce - Polypus</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="A team of Polypus agents that runs document-heavy finance and operations processes from intake to a controlled action in your system of record." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section wf-hero">
+    <div class="container">
+        <div class="wf-hero__inner">
+            <div>
+                <p class="eyebrow">Inside the Agentic GBS Workforce</p>
+                <h1 class="display wf-hero__title">Not AI tools. A GBS Workforce.</h1>
+                <p class="wf-hero__copy">
+                    Working with us is like hiring. Tell us which tasks need handling - validation,
+                    matching, prediction, compliance - and we'll bring you the Agents to execute them.
+                </p>
+            </div>
+
+            <div class="wf-flow" aria-hidden="true">
+                <div class="wf-flow__step">
+                    <span class="wf-flow__icon"><AppIcon Name="sparkle" Size="18" /></span>
+                    <span>
+                        <span class="wf-flow__kicker">What you select</span>
+                        <span class="wf-flow__label">Skills</span>
+                    </span>
+                </div>
+                <div class="wf-flow__line"></div>
+                <div class="wf-flow__step">
+                    <span class="wf-flow__icon"><AppIcon Name="user-check" Size="18" /></span>
+                    <span>
+                        <span class="wf-flow__kicker">What we deploy</span>
+                        <span class="wf-flow__label">Agents</span>
+                    </span>
+                </div>
+                <div class="wf-flow__line"></div>
+                <div class="wf-flow__step wf-flow__step--accent">
+                    <span class="wf-flow__icon"><AppIcon Name="users" Size="18" /></span>
+                    <span>
+                        <span class="wf-flow__kicker">What you get</span>
+                        <span class="wf-flow__label">Workforce</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. Feature rows
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="wf-feature">
+            <div class="wf-feature__copy">
+                <p class="wf-feature__kicker">What You Select</p>
+                <h2 class="wf-feature__title">Skills</h2>
+                <p class="wf-feature__copy">Select the GBS Skills your process needs to cover.</p>
+                <div class="wf-feature__action">
+                    <a class="btn btn--primary" href="/skills">
+                        Go to GBS Skills
+                        <AppIcon Name="arrow-right" Size="17" />
+                    </a>
+                </div>
+            </div>
+
+            <div class="wf-diagram" aria-hidden="true">
+                <span class="wf-diagram__node"><AppIcon Name="shield-check" Size="17" /> Input validation</span>
+                <span class="wf-diagram__node"><AppIcon Name="search" Size="17" /> Information extraction</span>
+                <span class="wf-diagram__node"><AppIcon Name="layers" Size="17" /> Document classification</span>
+                <span class="wf-diagram__node"><AppIcon Name="check-circle" Size="17" /> Duplicate prevention</span>
+            </div>
+        </div>
+
+        <div class="wf-feature wf-feature--reverse">
+            <div class="wf-feature__copy">
+                <p class="wf-feature__kicker">What We Deploy</p>
+                <h2 class="wf-feature__title">Agents</h2>
+                <p class="wf-feature__copy">We staff GBS Agents that match your Skills picks.</p>
+                <div class="wf-feature__action">
+                    <a class="btn btn--primary" href="/agents">
+                        Go to GBS Agents
+                        <AppIcon Name="arrow-right" Size="17" />
+                    </a>
+                </div>
+            </div>
+
+            <div class="wf-diagram" aria-hidden="true">
+                <span class="wf-diagram__node"><AppIcon Name="user-check" Size="17" /> Collaborate</span>
+                <span class="wf-diagram__node"><AppIcon Name="sparkle" Size="17" /> Reason</span>
+                <span class="wf-diagram__node"><AppIcon Name="plug" Size="17" /> Use tools</span>
+            </div>
+        </div>
+
+        <div class="wf-feature">
+            <div class="wf-feature__copy">
+                <p class="wf-feature__kicker">What You Get</p>
+                <h2 class="wf-feature__title">Workforce</h2>
+                <p class="wf-feature__copy">Agents with the right GBS Skills become your workforce in production.</p>
+            </div>
+
+            <div class="wf-diagram" aria-hidden="true">
+                <span class="wf-diagram__node wf-diagram__node--hub"><AppIcon Name="users" Size="18" /> Your GBS Workforce</span>
+                <span class="wf-diagram__node"><AppIcon Name="scan" Size="17" /> Invoice Processing</span>
+                <span class="wf-diagram__node"><AppIcon Name="check-circle" Size="17" /> Order Confirmations</span>
+                <span class="wf-diagram__node"><AppIcon Name="layers" Size="17" /> Delivery Notes</span>
+                <span class="wf-diagram__node"><AppIcon Name="flow" Size="17" /> Order Management</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Workforce bundles
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <SectionHeading Eyebrow="Agentic GBS Workforce bundles"
+                       Title="Your GBS Workforce"
+                       Description="Start with a standard Workforce – trailed, tested and built agentic from the ground up for the most common GBS scenarios." />
+
+        <div class="wf-bundles mt-7">
+            @foreach (var bundle in Bundles)
+            {
+                <article class="wf-card @(bundle.Href is null ? "wf-card--soon" : null)">
+                    <span class="wf-card__icon"><AppIcon Name="@bundle.Icon" Size="21" /></span>
+                    <h3 class="wf-card__title">@bundle.Title</h3>
+                    <p class="wf-card__text">@bundle.Text</p>
+
+                    <div class="wf-card__action">
+                        @if (bundle.Href is not null)
+                        {
+                            <a class="btn btn--ghost btn--sm" href="@bundle.Href">
+                                Explore
+                                <AppIcon Name="arrow-right" Size="15" />
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="wf-card__soon">
+                                <span class="badge-dot"></span>
+                                Coming soon
+                            </span>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Build Your Own
+   ========================================================================== *@
+<section class="section section--flush">
+    <div class="container">
+        <div class="wf-build">
+            <div>
+                <h2>Build Your Own</h2>
+                <p>Create your own Workforce directly on the Polypus platform.</p>
+
+                <ul class="wf-build__points">
+                    <li><AppIcon Name="check" Size="15" /> Custom workflows</li>
+                    <li><AppIcon Name="check" Size="15" /> Process-specific skills</li>
+                    <li><AppIcon Name="check" Size="15" /> Tailored agents</li>
+                </ul>
+            </div>
+
+            <div class="wf-build__action">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Talk to us
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Scale band
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="wf-scale">
+            <h2>An Agentic GBS Workforce that can help you scale</h2>
+            <p>
+                Deploy seamless Agentic workflows across every major GBS pillar: from procurement and
+                sales to accounts payable and receivable. The Polypus Agentic GBS Workforce has
+                built-in controls, explainable decisions and is easily scalable. Meaning you can
+                release human capacity to focus on tasks that only people can do.
+            </p>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   6. Frequently Asked Questions
+   ========================================================================== *@
+<section class="section">
+    <div class="container container--narrow">
+        <SectionHeading Eyebrow="Questions" Title="Frequently Asked Questions" Align="center" />
+        <FaqList Items="Questions" CssClass="mt-7" />
+    </div>
+</section>
+
+@code {
+    /// <summary>One bundle card. A null Href means the bundle is not available yet.</summary>
+    private sealed record Bundle(string Title, string Text, string Icon, string? Href);
+
+    private static readonly Bundle[] Bundles =
+    [
+        new("Invoice Processing", "A workforce that captures, codes, matches and validates every invoice.", "scan", "/workforce/invoice-processing"),
+        new("Order Confirmations", "A workforce catching and matching every line, price, and quantity.", "check-circle", "/workforce/order-confirmations"),
+        new("Delivery Notes", "A workforce turning delivery notes into validated receipts.", "layers", "/workforce/delivery-notes"),
+        new("Order Management", "A workforce validating sales orders against catalogue, pricing, volume.", "flow", "/workforce/order-management"),
+        new("Dunning Letters", "A workforce that captures, matches and resolves every dunning letter.", "mail", null),
+        new("Cash Application", "A workforce that matches incoming payments to open receivables.", "chart", null),
+        new("Contract Accounting", "A workforce that keeps contract terms and postings aligned.", "building", null)
+    ];
+
+    /// <summary>The five questions from the reference Workforce page, carried verbatim.</summary>
+    private static readonly IReadOnlyList<Faq> Questions =
+    [
+        new Faq
+        {
+            Category = "Workforce",
+            Question = "What is the difference between Skills, Agents and a Workforce?",
+            Answer = "A skill is a pre-packaged, reusable capability, like reading a document or " +
+                     "validating a field. An agent is the worker applying skills to run a process " +
+                     "step and make or propose decisions. A Polypus Workforce is the operating layer " +
+                     "above them: which agents run, what skills they have, and with which controls " +
+                     "and authority."
+        },
+        new Faq
+        {
+            Category = "Workforce",
+            Question = "Do I choose the Skills that go into a Workforce?",
+            Answer = "You don't need to. Polypus has standard, pre-packaged Workforce bundles that " +
+                     "already include all the necessary Skills for a process to run end to end. You " +
+                     "can opt out of certain Skills if your process does not require them. E.g.: you " +
+                     "already have an e-invoicing solution in place so you can go live with an " +
+                     "Invoice Processing Workforce without an e-Invoicing skill in it."
+        },
+        new Faq
+        {
+            Category = "Workforce",
+            Question = "Can we start with a single process?",
+            Answer = "Yes. A single Workforce, such as for invoice processing, proves the model on " +
+                     "real volume. Expanding to order confirmations or delivery notes afterwards " +
+                     "reuses some of the same skills, connectors and controls, so you do not start " +
+                     "from scratch when you grow."
+        },
+        new Faq
+        {
+            Category = "Workforce",
+            Question = "What does Build Your Own Workforce mean?",
+            Answer = "Build Your Own is the offer for documents outside the available named " +
+                     "solutions. You get build access to the Polypus platform and create your own " +
+                     "workforce for entirely new document types, with the same controls and " +
+                     "integrations available across the standard offering."
+        },
+        new Faq
+        {
+            Category = "Workforce",
+            Question = "How does a Workforce keep humans in control?",
+            Answer = "Every exception is logged with a specific reason and routed to a named owner. " +
+                     "Approvals follow your authority rules, and each decision leaves a trail: what " +
+                     "the agent read, what it decided, and what the system of record did. Reviewers " +
+                     "work in the review console, the human-in-the-loop interface where people see " +
+                     "each case, decide, and have their revision recorded."
+        }
+    ];
+}
+

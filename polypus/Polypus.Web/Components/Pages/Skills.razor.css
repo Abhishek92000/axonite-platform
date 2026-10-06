@@ -1,0 +1,169 @@
+/* ============================================================================
+   Polypus - Skills.razor.css
+   ----------------------------------------------------------------------------
+   Scoped styles for /skills. Mirrors the reference page structure (hero, four
+   complexity cards, a filterable library of 28 skills, FAQ) using the Polypus
+   design tokens from app.css.
+
+   Sections:
+     1. Hero
+     2. Complexity cards
+     3. Skills library and filters
+     4. Responsive
+   ========================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Hero
+   --------------------------------------------------------------------------- */
+.sk-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--s-8) var(--s-9);
+    border-top: 0;
+    text-align: center;
+}
+
+.sk-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(56rem 28rem at 50% -20%, rgba(15, 118, 110, 0.12), transparent 62%),
+        radial-gradient(36rem 22rem at 10% 10%, rgba(198, 158, 78, 0.1), transparent 60%);
+    pointer-events: none;
+}
+
+.sk-hero .container { position: relative; }
+
+.sk-hero__inner {
+    max-width: 54ch;
+    margin-inline: auto;
+}
+
+.sk-hero__title { margin-top: 0.4rem; }
+
+.sk-hero em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--accent);
+}
+
+.sk-hero__copy {
+    margin-top: var(--s-5);
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Complexity cards
+   --------------------------------------------------------------------------- */
+.sk-complexity {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--s-5);
+}
+
+.sk-complexity__card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+    border-top: 3px solid var(--tone, var(--accent));
+}
+
+.sk-complexity__card--low { --tone: #0f766e; }
+.sk-complexity__card--medium { --tone: #35509b; }
+.sk-complexity__card--high { --tone: #b07d16; }
+.sk-complexity__card--expert { --tone: #a8492c; }
+
+.sk-complexity__title {
+    margin-bottom: 0.5rem;
+    font-size: 1.02rem;
+    font-weight: 600;
+}
+
+.sk-complexity__copy {
+    margin: 0;
+    color: var(--ink-3);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------------------
+   3. Skills library and filters
+   --------------------------------------------------------------------------- */
+.sk-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: var(--s-6);
+}
+
+.sk-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-5);
+}
+
+.sk-skill {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-5) var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.sk-skill:hover {
+    border-color: #d3cec4;
+    box-shadow: var(--sh-2);
+    transform: translateY(-2px);
+}
+
+.sk-tag {
+    align-self: flex-start;
+    margin-bottom: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--r-full);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.sk-tag--low { background: #e8f4f1; color: #0f766e; }
+.sk-tag--medium { background: #eef2fb; color: #35509b; }
+.sk-tag--high { background: #fdf3e3; color: #92610f; }
+.sk-tag--expert { background: #f6ece7; color: #9a4a2f; }
+
+.sk-skill__title {
+    margin-bottom: 0.45rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.sk-skill__body {
+    margin: 0;
+    color: var(--ink-3);
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Responsive
+   --------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+    .sk-complexity { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .sk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+    .sk-complexity,
+    .sk-grid { grid-template-columns: minmax(0, 1fr); }
+}

@@ -1,0 +1,70 @@
+@page "/Error"
+@*
+    Error.razor  -  route /Error
+    ------------------------------------------------------------------------
+    The unhandled-exception page. Program.cs sends production exceptions here:
+
+        app.UseExceptionHandler("/Error", createScopeForErrors: true);
+
+    It deliberately says very little. Exception details are never shown to a
+    visitor - they are logged server-side, and the reference below is what a
+    customer quotes when reporting the problem.
+*@
+@inject IHttpContextAccessor? HttpContextAccessor
+
+<PageTitle>Something went wrong - Polypus</PageTitle>
+
+<section class="section page-hero">
+    <div class="container">
+        <div class="page-hero__inner">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span aria-hidden="true">/</span>
+                <span>Error</span>
+            </nav>
+
+            <p class="eyebrow">Error</p>
+            <h1 class="display">Something went wrong on our side</h1>
+            <p class="lead">
+                The page could not be completed. The problem has been logged with the request
+                identifier below - quoting it when you contact support saves a lot of back and forth.
+            </p>
+
+            @if (RequestId is not null)
+            {
+                <p>
+                    <span class="reference">
+                        <AppIcon Name="alert" Size="15" />
+                        @RequestId
+                    </span>
+                </p>
+            }
+
+            <div class="hero__actions">
+                <a class="btn btn--primary btn--lg" href="/">
+                    Back to the home page
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--ghost btn--lg" href="/contact">Tell us what happened</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--flush">
+    <div class="container container--narrow">
+        <div class="aside-panel">
+            <h2 class="h4">What to try</h2>
+            <ol class="aside-steps">
+                <li>Reload the page. Most transient failures clear on a second request.</li>
+                <li>If you were submitting the contact form, resend it once - nothing was stored.</li>
+                <li>If it keeps happening, email <a href="mailto:@CompanyProfile.SupportEmail">@CompanyProfile.SupportEmail</a> with the request identifier and the time it happened.</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>Framework-generated identifier for the failed request, when one is available.</summary>
+    private string? RequestId => HttpContextAccessor?.HttpContext?.TraceIdentifier;
+}

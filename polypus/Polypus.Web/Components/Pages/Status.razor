@@ -1,0 +1,132 @@
+@page "/status"
+@*
+    Status.razor  -  route /status
+    ------------------------------------------------------------------------
+    System status page. Shows the health of each Polypus subsystem and the
+    recent incident history.
+
+    IMPORTANT: the values below are static sample data. A real deployment should
+    drive this page from your monitoring system (status page API, Azure Monitor,
+    Datadog) so it cannot go stale while still claiming everything is fine.
+
+    Linked from the footer "Resources" column.
+*@
+
+<PageTitle>Polypus system status</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="Current status of the Polypus platform: document ingestion, extraction pipeline, review console, SAP connectors and the API." />
+</HeadContent>
+
+<PageHero Section="System status"
+          Eyebrow="Resources"
+          Title="All systems operational"
+          Lead="Updated 60 seconds ago. Planned maintenance is announced at least five business days in advance and never falls inside a customer's month-end close window without written agreement."
+          Pills="_pills" />
+
+<section class="section section--flush">
+    <div class="container container--narrow">
+        <div class="card">
+            <div class="table-wrap">
+                <table class="compare" style="min-width: 0;">
+                    <thead>
+                        <tr>
+                            <th scope="col">Component</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Uptime (90 days)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var component in Components)
+                        {
+                            <tr>
+                                <th scope="row">@component.Name</th>
+                                <td>
+                                    <span class="status-chip" style="color: var(--accent);">
+                                        <span class="badge-dot" style="background: var(--accent);"></span>
+                                        @component.Status
+                                    </span>
+                                </td>
+                                <td>@component.Uptime</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h2 class="h3 mt-7">Recent incidents</h2>
+
+        <div class="stack mt-4">
+            @foreach (var incident in Incidents)
+            {
+                <article class="card">
+                    <div class="row">
+                        <div>
+                            <span class="pill">@incident.Impact</span>
+                            <span class="pill pill--dark">Resolved</span>
+                        </div>
+                        <span class="text-xs muted">@incident.Dates</span>
+                    </div>
+
+                    <h3 class="h4 mt-4">@incident.Title</h3>
+                    <p class="muted">@incident.Summary</p>
+                    <p class="text-sm muted mb-0"><strong>Follow-up:</strong> @incident.FollowUp</p>
+                </article>
+            }
+        </div>
+
+        <div class="aside-panel mt-7">
+            <h3 class="h4">Report an issue</h3>
+            <p class="mb-0">
+                Support hours are @CompanyProfile.SupportHours. Severity-1 incidents on Business and
+                Enterprise plans are answered 24x7. Email
+                <a href="mailto:@CompanyProfile.SupportEmail">@CompanyProfile.SupportEmail</a>
+                with the tenant name, document id and any SAP response codes.
+            </p>
+        </div>
+    </div>
+</section>
+
+@code {
+    private static readonly IReadOnlyList<string> _pills = ["Live sample data", "90-day view", "Incident history"];
+
+    private static readonly IReadOnlyList<Component> Components =
+    [
+        new Component("Document ingestion (mail, SFTP, API)", "Operational", "99.99%"),
+        new Component("Extraction pipeline", "Operational", "99.97%"),
+        new Component("Review console", "Operational", "99.98%"),
+        new Component("SAP connectors (IDoc / BAPI / OData)", "Operational", "99.95%"),
+        new Component("API and webhooks", "Operational", "99.99%"),
+        new Component("Reporting and exports", "Operational", "99.98%")
+    ];
+
+    private static readonly IReadOnlyList<Incident> Incidents =
+    [
+        new Incident(
+            "Delayed webhook delivery to EU tenants",
+            "Partial",
+            "18 May 2025, 14:20 - 15:05 UTC",
+            "A queue backlog delayed document.posted webhooks by up to 11 minutes. No postings were lost and no documents were re-processed.",
+            "Webhook delivery alerts now fire at 2 minutes of lag instead of 10, and the queue is drained in parallel across partitions."),
+
+        new Incident(
+            "Review console slow to load for high-volume queues",
+            "Partial",
+            "02 April 2025, 09:05 - 09:40 UTC",
+            "Queues holding more than 5,000 open items took up to nine seconds to render during the morning peak.",
+            "Queue paging was rewritten and an index added; p95 load time for a 5,000-item queue is now under 1.2 seconds."),
+
+        new Incident(
+            "SAP connector authentication failures for one tenant",
+            "Tenant-specific",
+            "11 February 2025, 11:30 - 12:15 UTC",
+            "A rotated service account credential was not propagated to one tenant's connector, causing postings to fail and park correctly rather than post incorrectly.",
+            "Connector credential rotation now runs a pre-flight authentication check and notifies the tenant administrator before the old credential expires.")
+    ];
+
+    private sealed record Component(string Name, string Status, string Uptime);
+
+    private sealed record Incident(string Title, string Impact, string Dates, string Summary, string FollowUp);
+}

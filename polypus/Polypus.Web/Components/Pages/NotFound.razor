@@ -1,0 +1,78 @@
+@page "/not-found"
+@*
+    NotFound.razor  -  route /not-found
+    ------------------------------------------------------------------------
+    The 404 page. Program.cs wires it up with:
+
+        app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+
+    and Routes.razor names it as the router's NotFoundPage, so both "no route
+    matched" and "the server returned a 404 status" land here.
+
+    It offers three routes out: the home page, the plans, and the help centre.
+*@
+
+<PageTitle>Page not found - Polypus</PageTitle>
+
+<section class="section page-hero">
+    <div class="container">
+        <div class="page-hero__inner">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <a href="/">Home</a>
+                <span aria-hidden="true">/</span>
+                <span>Not found</span>
+            </nav>
+
+            <p class="eyebrow">Error 404</p>
+            <h1 class="display">That page has moved or never existed</h1>
+            <p class="lead">
+                The link may be out of date, or the address may have a typo. Here is where most
+                people were heading.
+            </p>
+
+            <div class="hero__actions">
+                <a class="btn btn--primary btn--lg" href="/">
+                    Back to the home page
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--ghost btn--lg" href="/plans">See plans and pricing</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--flush">
+    <div class="container">
+        <div class="grid-3">
+            <div class="card card--hover">
+                <span class="card__icon"><AppIcon Name="layers" Size="20" /></span>
+                <h3 class="h4">Product overview</h3>
+                <p class="muted">What Polypus does, in one page.</p>
+                <a class="link-arrow" href="/product">
+                    Open overview
+                    <AppIcon Name="arrow-right" Size="15" />
+                </a>
+            </div>
+
+            <div class="card card--hover">
+                <span class="card__icon"><AppIcon Name="tag" Size="20" /></span>
+                <h3 class="h4">Plans and pricing</h3>
+                <p class="muted">Basic, Growth, Business and Enterprise.</p>
+                <a class="link-arrow" href="/plans">
+                    Compare plans
+                    <AppIcon Name="arrow-right" Size="15" />
+                </a>
+            </div>
+
+            <div class="card card--hover">
+                <span class="card__icon"><AppIcon Name="headset" Size="20" /></span>
+                <h3 class="h4">Help Center</h3>
+                <p class="muted">Searchable answers, plus support contacts.</p>
+                <a class="link-arrow" href="/help">
+                    Search help
+                    <AppIcon Name="arrow-right" Size="15" />
+                </a>
+            </div>
+        </div>
+    </div>
+</section>

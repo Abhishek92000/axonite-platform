@@ -1,0 +1,127 @@
+# ============================================================================
+# Axonite - common .gitignore
+# Shared by every project in this folder:
+#   backend/        ASP.NET Core minimal API (Calid.Api)
+#   polypus/        Blazor web app (Polypus.Web)
+#   polypus.worktrees/  working copies of polypus
+# ============================================================================
+
+# --- .NET build output -------------------------------------------------------
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+build/
+bld/
+[Ll]og/
+[Ll]ogs/
+*.dll
+*.pdb
+*.exe
+*.tlog
+*.cache
+*.assemblyinfo
+
+# Scaffolding kept by the SDK - remove the "!" later in this file if you want it.
+*.Cache
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# --- Visual Studio / Rider / VS Code ----------------------------------------
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.rsuser
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+
+# --- NuGet ------------------------------------------------------------------
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+!packages/build/
+!packages/**/build/
+**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# --- Blazor / web tooling ---------------------------------------------------
+wwwroot/css/*.min.css
+wwwroot/js/*.min.js
+node_modules/
+jspm_packages/
+lib/
+.webpack/
+.eslintcache
+stylelintcache
+*.tsbuildinfo
+dist/
+.next/
+out/
+.turbo/
+coverage/
+
+# --- Test / coverage --------------------------------------------------------
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+TestResults/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.lcov
+
+# --- Secrets and local configuration ---------------------------------------
+# Never commit credentials or machine-specific settings.
+*.Local.json
+appsettings.Local.json
+appsettings.*.Local.json
+secrets.json
+.env
+.env.*
+!.env.example
+*.pfx
+*.snk
+
+# --- OS and editor cruft ----------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+*~
+*.bak
+*.tmp
+*.swp
+*.orig
+*.rej
+
+# --- Temporary files --------------------------------------------------------
+*.log
+*.tmp
+temp/
+temp/
+tmp/
+[Ee]xtensions/
+
+# --- Worktrees --------------------------------------------------------------
+# polypus.worktrees/ holds scratch working copies, not deliverables.
+polypus.worktrees/

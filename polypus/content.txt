@@ -1,0 +1,10 @@
+top - Polypus · Intelligent Document Processing for SAP
+
+heading - Automate the Journey from Document to SAP.
+
+content - Polypus reads supplier documents, extracts and validates the data, checks what needs human attention, and routes approved information through a controlled SAP posting workflow.
+
+Built for visibility, auditability, and controlled automation—without changing the SAP kernel.
+
+One workflow at a time. Proven before you scale.
+

@@ -1,0 +1,104 @@
+# ============================================================================
+# Axonite - common .gitattributes
+# Applies to every project under this folder. Keeping the rules here means all
+# repositories share one line-ending and diff policy.
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# Line endings
+#   * text=auto      Git stores LF, checks out the native ending.
+#   *.sh  eol=lf     Shell scripts must stay LF or they fail on Linux/CI.
+#   Windows-only files are pinned to CRLF so tooling does not rewrite them.
+# ---------------------------------------------------------------------------
+* text=auto
+
+*.sh          text eol=lf
+*.bash        text eol=lf
+*.zsh         text eol=lf
+*.ps1         text eol=crlf
+
+*.cmd         text eol=crlf
+*.bat         text eol=crlf
+
+# ---------------------------------------------------------------------------
+# Explicit text types
+# ---------------------------------------------------------------------------
+*.cs          text diff=csharp
+*.csproj      text
+*.sln         text eol=crlf
+*.props       text
+*.targets     text
+*.razor       text
+*.razor.css   text
+*.css         text
+*.scss        text
+*.html        text
+*.htm         text
+*.js          text
+*.mjs         text
+*.ts          text
+*.tsx         text
+*.jsx         text
+*.json        text
+*.jsonc       text
+*.yml         text
+*.yaml        text
+*.xml         text
+*.config      text
+*.md          text
+*.txt         text
+*.sql         text
+
+# Keep generated web assets out of diffs.
+*.min.css     -diff
+*.min.js      -diff
+
+# ---------------------------------------------------------------------------
+# Binary - never touch, never diff
+# ---------------------------------------------------------------------------
+*.png         binary
+*.jpg         binary
+*.jpeg        binary
+*.gif         binary
+*.webp        binary
+*.avif        binary
+*.ico         binary
+*.svg         text
+*.pdf         binary
+*.zip         binary
+*.7z          binary
+*.gz          binary
+*.woff        binary
+*.woff2       binary
+*.ttf         binary
+*.otf         binary
+*.eot         binary
+*.dll         binary
+*.exe         binary
+*.pdb         binary
+*.nupkg       binary
+*.snk         binary
+*.pfx         binary
+*.pptx        binary
+*.docx        binary
+*.xlsx        binary
+
+# ---------------------------------------------------------------------------
+# Diff drivers
+# ---------------------------------------------------------------------------
+*.csproj      merge=union
+*.sln         merge=union
+
+# ---------------------------------------------------------------------------
+# Linguist - keep generated/vendor files out of language stats
+# ---------------------------------------------------------------------------
+wwwroot/lib/**      linguist-vendored
+node_modules/**     linguist-vendored
+**/obj/**           linguist-generated
+**/bin/**           linguist-generated
+
+# ---------------------------------------------------------------------------
+# Export - files that should never ship in an archive
+# ---------------------------------------------------------------------------
+.gitignore        export-ignore
+.gitattributes    export-ignore

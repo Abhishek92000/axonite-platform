@@ -1,0 +1,155 @@
+@page "/changelog"
+@*
+    Changelog.razor  -  route /changelog
+    ------------------------------------------------------------------------
+    Release notes. Newest release first. Add a Release entry at the top of the
+    Releases list and the page, the anchors and the "new" highlight all follow.
+
+    Linked from the footer "Company" column as "Release notes".
+*@
+
+<PageTitle>Polypus release notes</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="What shipped in each Polypus release: extraction accuracy changes, new SAP connectors, review console refinements and platform notices." />
+</HeadContent>
+
+<PageHero Section="Release notes"
+          Eyebrow="Changelog"
+          Title="What shipped, and when"
+          Lead="Every release can be replayed against historical runs, so upgrading is a configuration decision rather than a project. Dates are release dates, not announcement dates." />
+
+<section class="section section--flush">
+    <div class="container container--narrow">
+        <div class="stack">
+            @foreach (var release in Releases)
+            {
+                <article class="card" id="@release.Version">
+                    <div class="row">
+                        <div>
+                            <span class="pill pill--accent">v@release.Version</span>
+                            @if (release.IsLatest)
+                            {
+                                <span class="pill">Latest</span>
+                            }
+                        </div>
+                        <span class="text-xs muted">@release.Date</span>
+                    </div>
+
+                    <h2 class="h4 mt-4">@release.Title</h2>
+                    <p class="muted">@release.Summary</p>
+
+                    <h3 class="h4 mt-5">Changes</h3>
+                    <ul class="check-list">
+                        @foreach (var change in release.Changes)
+                        {
+                            <li>
+                                <AppIcon Name="check" Size="16" />
+                                <span>@change</span>
+                            </li>
+                        }
+                    </ul>
+
+                    @if (!string.IsNullOrWhiteSpace(release.Note))
+                    {
+                        <p class="text-sm muted mb-0 mt-4">@release.Note</p>
+                    }
+                </article>
+            }
+        </div>
+
+        <div class="aside-panel mt-7">
+            <h3 class="h4">Subscribe to release notes</h3>
+            <p class="mb-0">
+                Implementation partners and existing customers can be added to the release
+                notification list. Email
+                <a href="mailto:@CompanyProfile.SupportEmail?subject=Release%20notes%20subscription">
+                    @CompanyProfile.SupportEmail
+                </a>
+                with the tenant name.
+            </p>
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>Newest release first.</summary>
+    private static readonly IReadOnlyList<Release> Releases =
+    [
+        new Release(
+            "4.6",
+            "12 June 2025",
+            "Tolerance rules per supplier group",
+            "Tolerance and variance rules can now be scoped to a supplier group rather than an entity, which removes the most common reason customers had to widen a global threshold.",
+            [
+                "Supplier groups with their own percentage and absolute tolerance",
+                "Per-group override of the global duplicate-detection window",
+                "Rule changes are versioned and replayable against historical documents",
+                "Review console shows which rule produced each exception",
+                "Export of rule effectiveness by group (exceptions avoided vs. raised)"
+            ],
+            "No connector changes. Existing rules continue to apply as the global default.",
+            IsLatest: true),
+
+        new Release(
+            "4.5",
+            "24 April 2025",
+            "OData connector for S/4HANA public cloud",
+            "The OData connector now supports the S/4HANA public cloud API surface, including the supplier-invoice API family, with idempotency keys on every write.",
+            [
+                "Supplier invoice posting via OData with parked-document option",
+                "Automatic token refresh and retry with exponential backoff",
+                "Idempotency keys so a retried write cannot create a duplicate document",
+                "Improved error mapping from SAP messages to review-queue reasons",
+                "Connector health checks surfaced on the operations dashboard"
+            ]),
+
+        new Release(
+            "4.4",
+            "06 March 2025",
+            "Review console keyboard mode",
+            "High-volume processors can now clear an exception queue without touching the mouse, which cut median touch time by roughly a third in pilot accounts.",
+            [
+                "Full keyboard navigation with a documented shortcut map",
+                "Field-level correction with tab-through validation",
+                "Bulk approve, bulk reassign and bulk park for month-end peaks",
+                "Inline confidence explanation for every flagged field",
+                "Accessibility improvements to focus handling and announcements"
+            ]),
+
+        new Release(
+            "4.3",
+            "21 January 2025",
+            "Data residency for India and the US",
+            "Tenants can now be provisioned in Mumbai and Virginia alongside the existing Frankfurt region, with residency fixed for the life of the tenant.",
+            [
+                "Region selection at provisioning time, recorded in the order form",
+                "Per-region backups and documented recovery objectives",
+                "Customer-managed keys general availability on Enterprise tenants",
+                "Residency statement added to the Data Processing Addendum"
+            ]),
+
+        new Release(
+            "4.2",
+            "11 November 2024",
+            "Credit notes and multi-page continuation sheets",
+            "Two document shapes that previously needed a reviewer now process end to end: supplier credit notes and invoices that continue across multiple pages or attachments.",
+            [
+                "Credit note extraction with correct sign handling into SAP",
+                "Attachment and continuation-sheet stitching before extraction",
+                "Line-item reconciliation across stitched pages",
+                "New document-type coverage metrics in the STP dashboard"
+            ])
+    ];
+
+    /// <summary>Shape of one release note entry.</summary>
+    private sealed record Release(
+        string Version,
+        string Date,
+        string Title,
+        string Summary,
+        IReadOnlyList<string> Changes,
+        string? Note = null,
+        bool IsLatest = false);
+}

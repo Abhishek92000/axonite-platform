@@ -1,0 +1,328 @@
+@page "/platform"
+@rendermode InteractiveServer
+@*
+    Platform.razor - route /platform
+    ------------------------------------------------------------------------
+    A faithful build of the reference Platform page, using Polypus branding:
+
+      1. Hero "The mission control for your agent pipeline"
+      2. Platform capabilities - the six reference capabilities
+      3. The four levers of agentic GBS excellence - a tab set with
+         AI Agents / AI Agent Studio / Integrations / Insights
+      4. Enterprise-grade security & controls with a Trust Report action
+      5. The model strip ("AI embedded across the board")
+      6. Closing CTA "Dial up results for any team with agentic transaction
+         processing"
+
+    Copy is carried verbatim from the reference; only the brand name is swapped
+    (Hypatos -> Polypus). Styles live in Platform.razor.css and use the Polypus
+    design tokens, so nothing here copies the reference theme.
+
+    Linked from: the header "Platform" menu.
+*@
+
+<PageTitle>Platform - Polypus</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="The Polypus platform orchestrates agents with the models, tools, context, guardrails and integrations needed for transaction-heavy processes." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section pf-hero">
+    <div class="container">
+        <div class="pf-hero__inner">
+            <p class="eyebrow">Polypus Platform</p>
+            <h1 class="display pf-hero__title">The mission control for your agent pipeline</h1>
+            <p class="pf-hero__copy">
+                More than 10 million GBS AI agents are orchestrated every month on the Polypus
+                platform - with the LLMs, tools, context, guardrails, and integrations needed to
+                turn transaction-heavy processes into working business solutions.
+            </p>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. Platform capabilities
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="Platform capabilities"
+                       Title="Not just an AI Agent platform – one purpose-built for GBS"
+                       Description="Transactions covered from the moment they arrive to the moment they are compliant and complete." />
+
+        <div class="pf-capabilities mt-7">
+            @foreach (var capability in Capabilities)
+            {
+                <article class="pf-capability">
+                    <span class="pf-capability__icon"><AppIcon Name="@capability.Icon" Size="21" /></span>
+                    <h3 class="pf-capability__title">@capability.Title</h3>
+                    <p class="pf-capability__copy">@capability.Copy</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Four levers
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <SectionHeading Eyebrow="The four levers"
+                       Title="The four levers of agentic GBS excellence"
+                       Description="The Polypus platform comes with GBS in its DNA: auditable, explainable, secure, and scalable. Generic agent builders hand you nodes and triggers. Here you deploy specialized coworkers, not robots you have to micromanage." />
+
+        <div class="pf-tabs" role="tablist" aria-label="Platform levers">
+            @for (var i = 0; i < Levers.Length; i++)
+            {
+                var index = i;
+                var lever = Levers[i];
+
+                <button type="button"
+                        class="pf-tab"
+                        role="tab"
+                        id="@($"pf-tab-{index}")"
+                        aria-selected="@((_lever == index).ToString().ToLowerInvariant())"
+                        aria-controls="pf-pane"
+                        @onclick="() => Select(index)">
+                    @lever.Tab
+                </button>
+            }
+        </div>
+
+        @{
+            var active = Levers[_lever];
+        }
+        <div class="pf-pane" id="pf-pane" role="tabpanel" aria-labelledby="@($"pf-tab-{_lever}")">
+            <h3 class="pf-pane__title">@active.Title</h3>
+            <p class="pf-pane__text">@active.Text</p>
+
+            @if (active.Checks.Length > 0)
+            {
+                <ul class="pf-checks">
+                    @foreach (var check in active.Checks)
+                    {
+                        <li>
+                            <AppIcon Name="check" Size="15" />
+                            <span>@check</span>
+                        </li>
+                    }
+                </ul>
+            }
+
+            @if (active.Features.Length > 0)
+            {
+                <div class="pf-features">
+                    @foreach (var feature in active.Features)
+                    {
+                        <article class="pf-feature">
+                            <h4 class="pf-feature__title">@feature.Title</h4>
+                            <ul class="pf-checks">
+                                @foreach (var point in feature.Points)
+                                {
+                                    <li>
+                                        <AppIcon Name="check" Size="14" />
+                                        <span>@point</span>
+                                    </li>
+                                }
+                            </ul>
+                        </article>
+                    }
+                </div>
+            }
+
+            @if (active.Extra is not null)
+            {
+                <p class="pf-pane__text">@active.Extra</p>
+            }
+
+            @if (active.Cards.Length > 0)
+            {
+                <div class="pf-features">
+                    @foreach (var card in active.Cards)
+                    {
+                        <article class="pf-feature">
+                            <span class="pf-feature__tag">@card.Tag</span>
+                            <h4 class="pf-feature__title">@card.Title</h4>
+                            <p class="pf-capability__copy">@card.Copy</p>
+                        </article>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Security band
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="pf-security">
+            <div>
+                <h2>Enterprise-grade security &amp; controls</h2>
+                <p>
+                    Polypus maintains ISO 27001 certification, SOC 2 Type II attestation, is HIPAA,
+                    GDPR and CCPA-compliant, and our cloud services have a STAR Level 1 Registry.
+                </p>
+                <div class="pf-security__action">
+                    <a class="btn btn--light btn--lg" href="/security">
+                        Trust Report
+                        <AppIcon Name="arrow-right" Size="18" />
+                    </a>
+                </div>
+            </div>
+
+            <div class="pf-security__badges">
+                @foreach (var badge in SecurityBadges)
+                {
+                    <span class="pf-badge">
+                        <AppIcon Name="shield-check" Size="16" />
+                        @badge
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Model strip
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <div class="pf-models">
+            <h2 class="pf-models__title">AI embedded across the board</h2>
+            <div class="pf-models__row">
+                @foreach (var model in Models)
+                {
+                    <span class="pf-model">@model</span>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   6. Closing CTA
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="pf-cta">
+            <h2>Dial up results for any team with agentic transaction processing</h2>
+
+            <div class="pf-cta__actions">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Book a walkthrough
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--on-dark btn--lg" href="/contact">Get in Touch</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private int _lever;
+
+    private void Select(int index) => _lever = index;
+
+    private sealed record Capability(string Title, string Copy, string Icon);
+
+    private static readonly Capability[] Capabilities =
+    [
+        new("Input Management", "Classifies, splits, routes and normalizes incoming transactions across documents, emails, structured data and other input formats.", "layers"),
+        new("Document Processing", "The best OCR for business documents - built to read what generic OCR cannot: low-quality scans, handwriting, faxed copies, mixed layouts, and every format a real GBS inbox receives.", "scan"),
+        new("Transaction Matching & Data Enrichment", "Connects transactions to suppliers, customers, POs, products, companies and other enterprise records to add the context required for processing.", "plug"),
+        new("Expert Task Automation", "Understands the transaction in its broader business context and applies organizational knowledge, policies, historical patterns and expert know-how to perform knowledge-intensive tasks such as accounting or tax treatment.", "sparkle"),
+        new("Transaction Assurance", "Checks transactions for correctness, completeness and compliance; identifies duplicates, inconsistencies, policy violations and other exceptions before they proceed.", "shield-check"),
+        new("Transaction Execution", "Turns the resulting decision into action - routing, requesting approval, communicating with involved parties, rejecting transactions or handing them over to downstream systems.", "flow")
+    ];
+
+    private sealed record FeatureCard(string Tag, string Title, string Copy);
+
+    private sealed record FeatureGroup(string Title, string[] Points);
+
+    private sealed record Lever(string Tab, string Title, string Text, string[] Checks, FeatureGroup[] Features, FeatureCard[] Cards, string? Extra);
+
+    private static readonly Lever[] Levers =
+    [
+        new("AI Agents",
+            "AI Agents",
+            "Our GBS agents are digital workers for business support. Each agent performs an expert task for processing a transaction, with one job: to complete it compliantly.",
+            ["LLM-based", "Natural language prompts", "Model-agnostic", "Explainable by design", "Learns your GBS context"],
+            [],
+            [],
+            null),
+
+        new("AI Agent Studio",
+            "AI Agent Studio",
+            "Every agent and workforce is built, instructed, and supervised inside AI Agent Studio – no black boxes.",
+            [],
+            [
+                new("Workforce HITL", [
+                    "View agent reasoning & credit spent by task",
+                    "Review & correct agent results",
+                    "Surface where agents need human input",
+                    "Manage work queues efficiently",
+                    "Collaborate with colleagues"
+                ]),
+                new("Setup", [
+                    "Choose from 50+ LLMs to power your agents",
+                    "Manage tools for agent to complete tasks",
+                    "Test and deploy agents securely"
+                ]),
+                new("Knowledge Management", [
+                    "Agent Editor – instruct agents in natural language",
+                    "Feedback agent – feed know-how on the go, in a chat",
+                    "Context assembly - ground agents in business history & data"
+                ])
+            ],
+            [],
+            null),
+
+        new("Integrations",
+            "Integrations",
+            "Agents on our platform access live data from your systems and act on it, with no limits. Our integrations connect them to the private information your business already runs on, so they never act on a stale data point.",
+            [],
+            [],
+            [
+                new("Inbound channels", "Inbound channels", "Email, Outlook, or API — transactions get ingested wherever they originate."),
+                new("Standard connectors", "Standard connectors", "SAP, Coupa, Workday, xSuite."),
+                new("No-code connectors", "No-code connectors", "Boomi and n8n plug straight into the platform, extending your existing automation stack."),
+                new("Open APIs", "Open APIs", "100+ REST endpoints for building highly tailored integrations."),
+                new("Agentic integrations", "Agentic integrations", "Give Polypus agents access to your agents and resources via A2C and MCP.")
+            ],
+            null),
+
+        new("Insights",
+            "Insights",
+            "Monitor and understand how your AI agents are performing in real time, see what's working, and where to fine-tune. It comes standard with every workforce you deploy, no separate purchase or setup.",
+            ["Gain visibility into bottlenecks", "Identify compliance issues", "Track the KPIs that matter", "Customizable on demand"],
+            [],
+            [],
+            null)
+    ];
+
+    private static readonly string[] SecurityBadges =
+    [
+        "ISO 27001",
+        "SOC 2 Type II",
+        "HIPAA",
+        "GDPR",
+        "CCPA",
+        "STAR Level 1"
+    ];
+
+    private static readonly string[] Models =
+    [
+        "Anthropic",
+        "Mistral AI",
+        "OpenAI",
+        "Google"
+    ];
+}
+

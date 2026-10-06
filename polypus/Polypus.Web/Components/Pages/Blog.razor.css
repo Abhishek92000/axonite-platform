@@ -1,0 +1,268 @@
+/* ============================================================================
+   Polypus - Blog.razor.css
+   ----------------------------------------------------------------------------
+   Scoped styles for /resources/blog. Mirrors the reference blog index (hero,
+   filter chips, featured articles, post grid, CTA) using the Polypus design
+   tokens from app.css.
+
+   Sections:
+     1. Hero
+     2. Filter chips and featured cards
+     3. Post grid
+     4. Responsive
+   ========================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Hero
+   --------------------------------------------------------------------------- */
+.blg-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--s-8) var(--s-8);
+    border-top: 0;
+}
+
+.blg-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(56rem 28rem at 50% -18%, rgba(15, 118, 110, 0.12), transparent 62%),
+        radial-gradient(36rem 22rem at 8% 6%, rgba(198, 158, 78, 0.1), transparent 60%);
+    pointer-events: none;
+}
+
+.blg-hero .container { position: relative; }
+
+.blg-hero__inner {
+    max-width: 62ch;
+    margin-inline: auto;
+    text-align: center;
+}
+
+.blg-hero__copy {
+    margin-top: var(--s-4);
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ---------------------------------------------------------------------------
+   0. Cover art
+   --------------------------------------------------------------------------- */
+.blg-cover {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    margin-bottom: var(--s-5);
+    border-radius: var(--r-sm);
+    background: var(--paper-alt);
+}
+
+.blg-cover--featured {
+    aspect-ratio: 21 / 9;
+    margin-bottom: var(--s-5);
+}
+
+.blg-cover img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Plate shown when the remote cover is missing or fails to load. */
+.blg-cover__fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(150deg, var(--accent-soft), var(--paper-alt));
+}
+
+.blg-cover__initial {
+    color: var(--accent);
+    font-family: var(--font-serif);
+    font-size: 2.4rem;
+    font-weight: 600;
+    opacity: 0.55;
+}
+
+.blg-cover--gbs       { background: linear-gradient(150deg, rgba(15,118,110,.18), var(--paper-alt)); }
+.blg-cover--finance   { background: linear-gradient(150deg, rgba(53,80,155,.16), var(--paper-alt)); }
+.blg-cover--product   { background: linear-gradient(150deg, rgba(176,125,22,.18), var(--paper-alt)); }
+.blg-cover--events    { background: linear-gradient(150deg, rgba(168,73,44,.16), var(--paper-alt)); }
+.blg-cover--media     { background: linear-gradient(150deg, rgba(90,90,100,.14), var(--paper-alt)); }
+.blg-cover--employee-journey { background: linear-gradient(150deg, rgba(15,118,110,.12), rgba(53,80,155,.12)); }
+
+/* ---------------------------------------------------------------------------
+   2. Filter chips and featured cards
+   --------------------------------------------------------------------------- */
+.blg-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: var(--s-6);
+}
+
+.blg-featured {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-5);
+    margin-top: var(--s-7);
+}
+
+.blg-featured__card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.blg-featured__card:hover {
+    border-color: #d3cec4;
+    box-shadow: var(--sh-2);
+    transform: translateY(-2px);
+}
+
+.blg-kicker {
+    align-self: flex-start;
+    margin-bottom: 0.7rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: var(--r-full);
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.blg-featured__title {
+    margin-bottom: 0.6rem;
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+}
+
+.blg-featured__excerpt {
+    margin: 0 0 var(--s-5);
+    color: var(--ink-3);
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+
+.blg-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    margin-top: auto;
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--line-soft);
+    color: var(--ink-3);
+    font-size: 0.78rem;
+}
+
+.blg-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.blg-meta svg { color: var(--accent); }
+
+/* ---------------------------------------------------------------------------
+   3. Post grid
+   --------------------------------------------------------------------------- */
+.blg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-5);
+}
+
+.blg-card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-5) var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.blg-card:hover {
+    border-color: #d3cec4;
+    box-shadow: var(--sh-2);
+    transform: translateY(-2px);
+}
+
+.blg-card__tag {
+    align-self: flex-start;
+    margin-bottom: 0.6rem;
+    padding: 0.18rem 0.6rem;
+    border-radius: var(--r-full);
+    background: var(--paper-alt);
+    color: var(--ink-2);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.blg-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+}
+
+.blg-card__tags .blg-card__tag { margin-bottom: 0; }
+
+.blg-more {
+    display: flex;
+    justify-content: center;
+}
+
+.blg-card__title {
+    margin-bottom: 0.5rem;
+    font-size: 0.98rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.blg-card__excerpt {
+    margin: 0 0 var(--s-4);
+    color: var(--ink-3);
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.blg-card .blg-meta { font-size: 0.75rem; }
+
+.blg-empty {
+    padding: var(--s-8);
+    border: 1px dashed var(--line);
+    border-radius: var(--r-md);
+    color: var(--ink-3);
+    text-align: center;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Responsive
+   --------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+    .blg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+    .blg-featured,
+    .blg-grid { grid-template-columns: minmax(0, 1fr); }
+}

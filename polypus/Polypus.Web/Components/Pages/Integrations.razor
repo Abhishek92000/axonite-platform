@@ -1,0 +1,183 @@
+@page "/integrations"
+@rendermode InteractiveServer
+@* ============================================================================
+   Integrations.razor - route /integrations
+   ----------------------------------------------------------------------------
+   A faithful build of the reference Integrations page, using Polypus branding:
+
+     1. Hero "Try our native connectors."
+     2. Four connector cards - SAP, IFS, Coupa, Odoo - each linking to
+        its connector page
+     3. Stop patching integrations - accurate ingestion, automated export,
+        flexible APIs
+     4. Integrate with minimal effort & maximum reliability - four promises
+        and a Monitor system performance action
+     5. Closing CTA "Remove your transaction processing blockers"
+
+   Copy is carried verbatim from the reference; only the brand name is swapped
+   (Hypatos -> Polypus) and connector links point at our own pages. Styles live
+   in Integrations.razor.css and use the Polypus design tokens, so nothing here
+   copies the reference theme.
+
+   Linked from: the header "Platform" menu and the sitemap.
+   ========================================================================== *@
+
+<PageTitle>Integrations - Polypus</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="Pre-built connectors for SAP, IFS, Coupa and Odoo, plus powerful APIs and minimal configuration." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section ct-hero">
+    <div class="container">
+        <div class="ct-hero__inner">
+            <p class="eyebrow">Polypus Integrations</p>
+            <h1 class="display ct-hero__title">Try our native <em>connectors.</em></h1>
+            <p class="ct-hero__copy">
+                Integrations built for your document processing must-dos and your tools. Pre-built
+                connectors. Powerful APIs. Minimal configuration.
+            </p>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. Connector cards
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="Native connectors"
+                       Title="Connect to the systems you already run"
+                       Description="Each connector ships with the platform, is configured per tenant, and returns reviewed documents to your system ready for processing." />
+
+        <div class="ct-connectors mt-7">
+            @foreach (var connector in Connectors)
+            {
+                <article class="ct-connector">
+                    <div class="ct-connector__head">
+                        <span class="ct-connector__mark"><AppIcon Name="plug" Size="20" /></span>
+                        <h2 class="ct-connector__title">@connector.Name</h2>
+                    </div>
+
+                    <p class="ct-connector__copy">@connector.Copy</p>
+
+                    <div class="ct-connector__action">
+                        <a class="btn btn--ghost btn--sm" href="@connector.Href">
+                            Learn more
+                            <AppIcon Name="arrow-right" Size="15" />
+                        </a>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Stop patching integrations
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <SectionHeading Eyebrow="Stop patching integrations"
+                       Title="Seamless data flow between your systems"
+                       Description="We give you a path to one new agentic workflow - live in production on a real problem you face today." />
+
+        <div class="ct-flow mt-7">
+            @foreach (var card in Flow)
+            {
+                <article class="ct-flow__card">
+                    <span class="ct-flow__icon"><AppIcon Name="@card.Icon" Size="20" /></span>
+                    <h3 class="ct-flow__title">@card.Title</h3>
+                    <p class="ct-flow__text">@card.Text</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Reliability
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="Integrate with minimal effort &amp; maximum reliability"
+                       Title="Deploy quickly, without tedious rollouts"
+                       Description="Polypus connectors eliminate manual fixes and bridge performance gaps between tools and systems that should - but don't quite - communicate flawlessly." />
+
+        <div class="ct-stats">
+            @foreach (var stat in Stats)
+            {
+                <div class="ct-stat">
+                    <div class="ct-stat__value">@stat.Value</div>
+                    <div class="ct-stat__label">@stat.Label</div>
+                </div>
+            }
+        </div>
+
+        <div class="mt-7">
+            <a class="btn btn--primary btn--lg" href="/status">
+                Monitor system performance
+                <AppIcon Name="arrow-right" Size="18" />
+            </a>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Closing CTA
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <div class="ct-cta">
+            <div>
+                <h2>Remove your transaction processing blockers</h2>
+                <p>
+                    Let's discuss how we can help you run a modern back office where no
+                    transactional document is left misunderstood, mismatched or mishandled.
+                </p>
+            </div>
+
+            <div class="ct-cta__actions">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Book a walkthrough
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--on-dark btn--lg" href="/contact">Get in Touch</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private sealed record Connector(string Name, string Copy, string Href);
+
+    private static readonly Connector[] Connectors =
+    [
+        new("SAP", "Polypus SAP connector integrates with SAP for autonomous accounts payable and document processing.", "/integrations/sap"),
+        new("IFS", "Our IFS connector transforms your document and accounts payable workflows into a fully automated process.", "/integrations/ifs"),
+        new("Coupa", "Polypus AI agents for invoice processing are Coupa-certified and ready to enhance your accounts payable workflows.", "/integrations/coupa"),
+        new("Odoo", "Eliminate bottlenecks and manual tasks in processing complex invoices with Odoo and Polypus.", "/integrations/odoo")
+    ];
+
+    private sealed record FlowCard(string Title, string Text, string Icon);
+
+    private static readonly FlowCard[] Flow =
+    [
+        new("Accurate ingestion of data", "Polypus collects transactional and reference data from your ERP system. This enables efficient data enrichment, line-item matching, and AI predictions, reducing errors and ensuring accurate workflows.", "download"),
+        new("Automated document export with system integration", "Once the document is understood and matched automatically, Polypus returns it to your system via APIs, ready for processing.", "flow"),
+        new("Flexible integration via APIs", "Integrate Polypus' AI document processing via APIs for control, scalability, and customization in your ERP system.", "plug")
+    ];
+
+    private sealed record Stat(string Value, string Label);
+
+    private static readonly Stat[] Stats =
+    [
+        new("Up to 3h", "for deploy"),
+        new("99.999%", "uptime"),
+        new("Dedicated", "support"),
+        new("Scale", "as you grow")
+    ];
+}

@@ -1,0 +1,436 @@
+@page "/"
+@rendermode InteractiveServer
+@*
+    Home.razor
+    ------------------------------------------------------------------------
+    The home page. This is the only page the brief asked to be fully built
+    out, so it carries every marketing section, in this order:
+
+      1. Hero              - what Polypus is, in one screen
+      2. Customer strip    - who runs it
+      3. Metrics           - four headline numbers
+      4. Features          - the capability grid
+      5. Process           - how a document travels through the product
+      6. Company           - the company that owns Polypus (Axonite)
+      7. Testimonials      - five customer quotes
+      8. FAQ               - six frequently asked questions
+      9. Closing CTA       - book a walkthrough
+
+    Where the content comes from
+      Almost nothing is hard-coded here. The copy lives in:
+        Models/ProductProfile.cs          product positioning, metrics, documents, integrations
+        Models/CompanyProfile.cs          everything about Axonite
+        Services/FeatureCatalog.cs        the feature list
+        Services/PlanCatalog.cs           pricing
+        Services/TestimonialCatalog.cs    the quotes
+        Services/FaqCatalog.cs            the questions
+      Change the copy there and this page follows. Only layout lives here.
+
+    Where the plans live
+      The home page no longer carries a pricing section of its own. /plans is the
+      pricing page, and every plan card there links to /contact?plan={id}, which
+      Pages/Contact.razor reads to preselect the plan and show a plan summary
+      beside the form.
+
+    Render mode
+      InteractiveServer, because the FAQ accordion answers to the visitor.
+      Everything else is plain markup that renders on the server.
+*@
+
+<PageTitle>Polypus - Intelligent document processing and controlled SAP automation</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@ProductProfile.MetaDescription" />
+    <meta property="og:title" content="Polypus - documents in, clean SAP postings out" />
+    <meta property="og:description" content="@ProductProfile.MetaDescription" />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href="https://polypus.axonite.io/" />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section hero">
+    <div class="container">
+        <div class="hero__inner">
+            <div class="hero__copy">
+                <p class="eyebrow">@ProductProfile.HeroEyebrow</p>
+
+                <h1 class="display hero__title">@ProductProfile.HeroHeadline</h1>
+
+                <p class="lead hero__lead">@ProductProfile.HeroLead</p>
+
+                @* <p class="muted measure-tight">@ProductProfile.HeroSupporting</p> *@
+
+                <div class="hero__actions">
+                    <a class="btn btn--primary btn--lg" href="/contact">
+                        Book a walkthrough
+                        <AppIcon Name="arrow-right" Size="18" />
+                    </a>
+                </div>
+
+                <div class="mt-7">
+                    <p class="eyebrow">Documents Polypus reads today</p>
+
+                    <div class="doc-strip mt-4">
+                        @foreach (var docType in ProductProfile.HeroDocumentTypes)
+                        {
+                            <span>@docType</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @* Decorative product mock, built from CSS so it stays crisp at any zoom. *@
+            <div class="console-wrap" aria-hidden="true">
+                <div class="console">
+                    <div class="console__chrome">
+                        <span class="console__dots"><span></span><span></span><span></span></span>
+                        <span class="console__title">Polypus &middot; Review queue &middot; Meridian Industrial</span>
+                        <span class="console__tag">INV-88421</span>
+                    </div>
+
+                    <div class="console__body">
+                        <div class="console__rail">
+                            <span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span>
+                        </div>
+
+                        <div class="console__doc">
+                            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                        </div>
+
+                        <div class="console__fields">
+                            <div class="field-row">
+                                <span class="field-row__name">Supplier</span>
+                                <span class="field-row__value">100482</span>
+                                <span class="field-row__score">99</span>
+                            </div>
+                            <div class="field-row">
+                                <span class="field-row__name">Invoice no.</span>
+                                <span class="field-row__value">INV-88421</span>
+                                <span class="field-row__score">99</span>
+                            </div>
+                            <div class="field-row">
+                                <span class="field-row__name">Document date</span>
+                                <span class="field-row__value">14.03.2025</span>
+                                <span class="field-row__score">98</span>
+                            </div>
+                            <div class="field-row">
+                                <span class="field-row__name">PO reference</span>
+                                <span class="field-row__value">4500012877</span>
+                                <span class="field-row__score">97</span>
+                            </div>
+                            <div class="field-row">
+                                <span class="field-row__name">Net amount</span>
+                                <span class="field-row__value">42,180.00</span>
+                                <span class="field-row__score">99</span>
+                            </div>
+                            <div class="field-row field-row--flag">
+                                <span class="field-row__name">Tax code</span>
+                                <span class="field-row__value">J1 / V1 ?</span>
+                                <span class="field-row__score">74</span>
+                            </div>
+
+                            <div class="console__verdict">
+                                <span><strong>3-way match</strong> passed &middot; tolerance 0.4% of PO value</span>
+                                <span class="console__stamp">
+                                    <AppIcon Name="check" Size="13" />
+                                    Routed to review
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="console-float">
+                    <b>71%</b>
+                    <span>posted untouched</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. Customer strip - text names only, no third-party logos are shipped
+   ========================================================================== *@
+<div class="logo-strip">
+    <div class="container logo-strip__inner">
+        <span class="logo-strip__label">Running in production at</span>
+        <div class="logo-strip__names">
+            @foreach (var customer in ProductProfile.Customers)
+            {
+                <span>@customer</span>
+            }
+        </div>
+    </div>
+</div>
+
+@* ==========================================================================
+   3. Metrics
+   ========================================================================== *@
+<section class="section section--tight">
+    <div class="container">
+        <div class="metrics" data-reveal>
+            @foreach (var metric in ProductProfile.Metrics)
+            {
+                <div class="metric">
+                    <div class="metric__value">@metric.Value</div>
+                    <div class="metric__label">@metric.Label</div>
+                    @if (!string.IsNullOrWhiteSpace(metric.Footnote))
+                    {
+                        <div class="metric__footnote">@metric.Footnote</div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Features
+   ========================================================================== *@
+<section class="section" id="features">
+    <div class="container">
+        <SectionHeading Eyebrow="Capabilities"
+                       Title="From Supplier Documents to Seamless ERP Posting"
+                       Description="Polypus is not just a document reader with an ERP button on the side. Extraction, validation, review, and posting work together as one governed pipeline—so your automation remains reliable, traceable, and controlled, even during month-end." />
+
+        <div class="feature-grid mt-7" data-reveal>
+            @foreach (var feature in FeatureCatalog.HomeHighlights)
+            {
+                <article class="feature-card">
+                    <span class="card__icon"><AppIcon Name="@feature.Icon" Size="22" /></span>
+                    <h3>@feature.Title</h3>
+                    <p>@feature.Summary</p>
+                    @* <div class="feature-card__meta">@feature.Details.Count controls documented</div> *@
+                </article>
+            }
+        </div>
+
+        <div class="plans__toolbar mt-6">
+            <a class="link-arrow" href="/features">
+                All Ten capabilities in detail
+                <AppIcon Name="arrow-right" Size="16" />
+            </a>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Process - what actually happens to a document
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="How it works"
+                       Title="One document, four checkpoints, one posting"
+                       Description="Nothing reaches your SAP system until it has passed the controls your finance team configured." />
+
+        <div class="process mt-7" data-reveal>
+            @{
+                var steps = new[]
+                {
+                    new ProcessStep("01", "Capture",
+                        "Documents arrive from mailboxes, SFTP folders, Ariba queues, scanners or the API. Each file is fingerprinted and de-duplicated on arrival.",
+                        "instant"),
+                    new ProcessStep("02", "Extract and validate",
+                        "Fields are captured at line level with confidence scores, then checked against SAP master data: supplier, PO, tax code, cost centre, tolerances.",
+                        "under 12 s median"),
+                    new ProcessStep("03", "Review only what needs it",
+                        "Anything below your confidence threshold or outside tolerance lands in a queue with the source page beside the fields. Corrections tune the tenant.",
+                        "exceptions only"),
+                    new ProcessStep("04", "Post with evidence",
+                        "Approved documents post through IDoc, BAPI or OData. The source, model version, rule set, reviewer and SAP response are stored against the posting.",
+                        "parked or posted")
+                };
+            }
+
+            @foreach (var step in steps)
+            {
+                <div class="process__step">
+                    <span class="process__num">@step.Number</span>
+                    <h3>@step.Title</h3>
+                    <p>@step.Summary</p>
+                    <span class="process__time">@step.Duration</span>
+                </div>
+            }
+        </div>
+
+        @* <div class="mt-7">
+            <p class="eyebrow">Documents Polypus reads today</p>
+            <div class="doc-strip mt-4">
+                @foreach (var docType in ProductProfile.DocumentTypes)
+                {
+                    <span>@docType</span>
+                }
+            </div>
+        </div> *@
+    </div>
+</section>
+
+@* ==========================================================================
+   6. Company - the company behind Polypus
+   ========================================================================== *@
+<section class="section section--paper-alt" id="company">
+    <div class="container">
+        <div class="company">
+            <div class="company__story">
+                <SectionHeading Eyebrow="The company behind Polypus"
+                               Title="@CompanyProfile.LegalName"
+                               Description="@CompanyProfile.Tagline" />
+
+                @foreach (var paragraph in CompanyProfile.Story)
+                {
+                    <p class="muted">@paragraph</p>
+                }
+
+                <figure class="founder-card mt-4">
+                    <blockquote>@CompanyProfile.FounderQuote</blockquote>
+                    <figcaption>
+                        <span class="avatar" aria-hidden="true">AM</span>
+                        <span>
+                            <span class="founder__name">@CompanyProfile.FounderName</span>
+                            <span class="founder__role">@CompanyProfile.FounderRole</span>
+                        </span>
+                    </figcaption>
+                </figure>
+
+                <div class="plans__toolbar mt-5">
+                    <a class="btn btn--ghost" href="https://axonite.io" target="_blank" rel="noopener">
+                        More about @CompanyProfile.Name
+                        <AppIcon Name="arrow-right" Size="16" />
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <div class="company__facts">
+                    @foreach (var fact in CompanyProfile.Facts)
+                    {
+                        <div class="fact">
+                            <div class="fact__value">@fact.Value</div>
+                            <div class="fact__label">@fact.Label</div>
+                        </div>
+                    }
+                </div>
+
+                <div class="office-list mt-6">
+                    @foreach (var office in CompanyProfile.Offices)
+                    {
+                        <div class="office">
+                            <div>
+                                <span class="office__city">@office.City</span>
+                                <span class="office__country">@office.Country</span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(office.Address))
+                            {
+                                <p class="office__address">@office.Address</p>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(office.Role))
+                            {
+                                <p class="office__role">@office.Role</p>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="aside-panel mt-6">
+                    <h4 class="h4">Talk to the team that builds it</h4>
+                    <div class="dl">
+                        <div>
+                            <dt>Sales</dt>
+                            <dd><a href="mailto:@CompanyProfile.SalesEmail">@CompanyProfile.SalesEmail</a></dd>
+                        </div>
+                        <div>
+                            <dt>Support</dt>
+                            <dd><a href="mailto:@CompanyProfile.SupportEmail">@CompanyProfile.SupportEmail</a></dd>
+                        </div>
+                        <div>
+                            <dt>Phone</dt>
+                            <dd>@CompanyProfile.Phone</dd>
+                        </div>
+                        <div>
+                            <dt>Hours</dt>
+                            <dd>@CompanyProfile.SupportHours</dd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   7. Testimonials
+   ========================================================================== *@
+<section class="section" id="customers">
+    <div class="container">
+        <SectionHeading Eyebrow="Customers"
+                       Title="Teams who stopped re-keying invoices"
+                       Description="Five of the finance, shared-services and audit teams running Polypus in production." />
+
+        <div class="quotes mt-7">
+            <QuoteCard Testimonial="TestimonialCatalog.Featured" />
+
+            <div class="quote-grid" data-reveal>
+                @foreach (var quote in TestimonialCatalog.Others)
+                {
+                    <QuoteCard Testimonial="quote" />
+                }
+            </div>
+        </div>
+
+        <p class="text-xs muted mt-5">
+            Quotes and company names are illustrative sample content for this template.
+            Replace them with approved customer references before publishing.
+        </p>
+    </div>
+</section>
+
+@* ==========================================================================
+   8. FAQ
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container container--narrow">
+        <SectionHeading Eyebrow="Questions"
+                       Title="The things procurement always asks"
+                       Align="center" />
+
+        <FaqList Items="FaqCatalog.HomeHighlights" CssClass="mt-7" />
+
+        <div class="plans__toolbar plans__toolbar--center mt-6">
+            <a class="link-arrow" href="/help">
+                More answers in the Help Center
+                <AppIcon Name="arrow-right" Size="16" />
+            </a>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   9. Closing call to action
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <div class="cta" data-reveal>
+            <div>
+                <h2 class="h2">Send us a month of invoices. We'll show you the postings.</h2>
+                <p>
+                    A walkthrough runs on your own documents, not on a demo pack. Bring the
+                    supplier layouts that normally break your automation and we will process
+                    them live, with your validation rules applied.
+                </p>
+            </div>
+
+            <div class="cta__actions">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Book a walkthrough
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                @* <a class="btn btn--on-dark" href="/plans">Choose a plan</a>
+                <span class="text-xs">No credit card. Sandbox in 30 days.</span> *@
+            </div>
+        </div>
+    </div>
+</section>

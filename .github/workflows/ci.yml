@@ -1,0 +1,56 @@
+name: CI
+
+# Builds every project in this folder. Both are .NET 10, so one SDK install covers
+# the backend API (Calid.Api) and the Blazor web app (Polypus.Web).
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: |
+          dotnet restore backend/Calid.Api.csproj
+          dotnet restore polypus/Polypus.Web.csproj
+
+      - name: Build backend
+        run: dotnet build backend/Calid.Api.csproj --configuration Release --no-restore
+
+      - name: Build web
+        run: dotnet build polypus/Polypus.Web.csproj --configuration Release --no-restore
+
+      # Runs only when a test project exists, so the workflow stays green before one is added.
+      - name: Test
+        shell: bash
+        run: |
+          shopt -s globstar nullglob
+          projects=(**/*Tests.csproj **/*.Tests.csproj)
+          if [ ${#projects[@]} -eq 0 ]; then
+            echo "No test projects found - skipping."
+          else
+            for p in "${projects[@]}"; do
+              echo "Testing $p"
+              dotnet test "$p" --configuration Release --no-restore
+            done
+          fi

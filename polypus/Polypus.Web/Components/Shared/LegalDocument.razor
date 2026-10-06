@@ -1,0 +1,82 @@
+@*
+    LegalDocument.razor
+    ------------------------------------------------------------------------
+    Renders a long-form policy document: a sticky table of contents on the left,
+    numbered sections on the right, and a "last updated" stamp.
+
+    Why it exists
+      Privacy Policy, Terms of Service, Cookie Policy and the Data Processing
+      Addendum are all the same shape. One component keeps them consistent and
+      means the table of contents is generated from the content rather than
+      maintained by hand.
+
+    Used by
+      Pages/PrivacyPolicy.razor, TermsOfService.razor, CookiePolicy.razor,
+      DataProcessing.razor
+
+    To add a section: add a LegalSection to the page's Sections list. The
+    table-of-contents entry, the number and the anchor all follow from it.
+*@
+
+<article class="legal">
+    <aside class="legal__toc">
+        <p class="eyebrow">On this page</p>
+        <ol>
+            @foreach (var section in Sections)
+            {
+                <li><a href="#@section.Id">@section.Heading</a></li>
+            }
+        </ol>
+        <p class="updated mt-5">Last updated @Updated</p>
+    </aside>
+
+    <div class="prose">
+        @if (!string.IsNullOrWhiteSpace(Intro))
+        {
+            <p class="lead">@Intro</p>
+        }
+
+        @foreach (var section in Sections)
+        {
+            <section id="@section.Id">
+                <h2>@section.Heading</h2>
+
+                @foreach (var paragraph in section.Paragraphs)
+                {
+                    <p>@paragraph</p>
+                }
+
+                @if (section.Bullets.Count > 0)
+                {
+                    <ul>
+                        @foreach (var bullet in section.Bullets)
+                        {
+                            <li>@bullet</li>
+                        }
+                    </ul>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(section.Note))
+                {
+                    <aside>
+                        <p>@section.Note</p>
+                    </aside>
+                }
+            </section>
+        }
+    </div>
+</article>
+
+@code {
+    /// <summary>Sections in display order. Titles also build the table of contents.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<LegalSection> Sections { get; set; } = [];
+
+    /// <summary>Short lead paragraph above the first section.</summary>
+    [Parameter]
+    public string? Intro { get; set; }
+
+    /// <summary>Human-readable date shown in the contents panel.</summary>
+    [Parameter, EditorRequired]
+    public string Updated { get; set; } = string.Empty;
+}

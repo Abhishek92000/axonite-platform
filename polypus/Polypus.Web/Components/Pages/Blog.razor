@@ -1,0 +1,172 @@
+@page "/resources/blog"
+@rendermode InteractiveServer
+@*
+    Blog.razor - route /resources/blog
+    ------------------------------------------------------------------------
+    A faithful build of the reference blog index, using Polypus branding:
+
+      1. Hero "Polypus Blog"
+      2. Filter chips - Blog Home / GBS / Finance / Product / Events / Media /
+         Employee Journey
+      3. Featured articles - the two newest posts
+      4. The full post grid, filtered by the selected chip
+
+    Posts come from Services/BlogCatalog.cs. Copy is carried from the reference
+    with the brand name swapped (Hypatos -> Polypus). Styles live in
+    Blog.razor.css and use the Polypus design tokens.
+*@
+
+<PageTitle>Blog - Polypus</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="Insights on agentic AI, global business services and document-heavy operations." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section blg-hero">
+    <div class="container">
+        <div class="blg-hero__inner">
+            <h1 class="display">Polypus Blog</h1>
+            <p class="blg-hero__copy">Stay updated with the latest insights on Agentic AI, GBS and more.</p>
+
+            @* ==============================================================
+               2. Filters
+               ============================================================== *@
+            <div class="blg-filters" role="group" aria-label="Filter articles">
+                @foreach (var category in BlogCatalog.Categories)
+                {
+                    var key = category.Key;
+                    <button type="button"
+                            class="filter-chip"
+                            aria-pressed="@(string.Equals(_filter, key, StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
+                            @onclick="() => Select(key)">
+                        @category.Label
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Featured articles
+   ========================================================================== *@
+@{
+    var featured = Filtered.Take(2).ToList();
+    var rest = Filtered.Skip(2).Take(_visible).ToList();
+    var hasMore = Filtered.Count > 2 + rest.Count;
+}
+
+@if (featured.Count > 0)
+{
+    <section class="section section--flush">
+        <div class="container">
+            <div class="blg-featured">
+                @foreach (var post in featured)
+                {
+                    <article class="blg-featured__card">
+                        <BlogCover Post="post" Class="blg-cover blg-cover--featured" />
+                        <span class="blg-kicker">Featured Article</span>
+                        <h2 class="blg-featured__title">@post.Title</h2>
+                        <p class="blg-featured__excerpt">@post.Excerpt</p>
+
+                        <div class="blg-meta">
+                            <span><AppIcon Name="user-check" Size="14" /> @post.Author</span>
+                            <span><AppIcon Name="calendar" Size="14" /> @post.Date</span>
+                            @if (!string.IsNullOrWhiteSpace(post.ReadTime))
+                            {
+                                <span><AppIcon Name="clock" Size="14" /> @post.ReadTime</span>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@* ==========================================================================
+   4. Post grid
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <p class="text-sm muted">
+            Showing @(featured.Count + rest.Count) of @Filtered.Count articles
+            @if (!string.Equals(_filter, "all", StringComparison.OrdinalIgnoreCase))
+            {
+                @:in @BlogCatalog.Categories.First(c => c.Key == _filter).Label
+            }
+        </p>
+
+        @if (rest.Count > 0)
+        {
+            <div class="blg-grid mt-5">
+                @foreach (var post in rest)
+                {
+                    <article class="blg-card">
+                        <BlogCover Post="post" Class="blg-cover" />
+
+                        <div class="blg-card__tags">
+                            @foreach (var tag in post.CategoryLabels)
+                            {
+                                <span class="blg-card__tag">@tag</span>
+                            }
+                        </div>
+
+                        <h3 class="blg-card__title">@post.Title</h3>
+                        <p class="blg-card__excerpt">@post.Excerpt</p>
+
+                        <div class="blg-meta">
+                            <span><AppIcon Name="calendar" Size="13" /> @post.Date</span>
+                            @if (!string.IsNullOrWhiteSpace(post.ReadTime))
+                            {
+                                <span><AppIcon Name="clock" Size="13" /> @post.ReadTime</span>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+        else if (featured.Count == 0)
+        {
+            <div class="blg-empty mt-5">
+                <p class="mb-0">No articles in this category yet.</p>
+            </div>
+        }
+
+        @if (hasMore)
+        {
+            <div class="blg-more mt-7">
+                <button type="button" class="btn btn--ghost btn--lg" @onclick="ShowMore">
+                    Show more articles
+                    <AppIcon Name="chevron-down" Size="17" />
+                </button>
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    /// <summary>How many posts the grid reveals at once, mirroring the reference's page size.</summary>
+    private const int PageSize = 6;
+
+    private string? _filter = "all";
+
+    private int _visible = PageSize;
+
+    private void Select(string key)
+    {
+        _filter = key;
+        _visible = PageSize;
+    }
+
+    private void ShowMore() => _visible += PageSize;
+
+    /// <summary>The posts matching the current filter.</summary>
+    private IReadOnlyList<BlogPost> Filtered =>
+        _filter is null || string.Equals(_filter, "all", StringComparison.OrdinalIgnoreCase)
+            ? BlogCatalog.All
+            : BlogCatalog.All.Where(p => p.CategoryKeys.Contains(_filter, StringComparer.OrdinalIgnoreCase)).ToList();
+}

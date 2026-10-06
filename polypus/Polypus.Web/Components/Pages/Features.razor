@@ -1,0 +1,77 @@
+@page "/features"
+@*
+    Features.razor  -  route /features
+    ------------------------------------------------------------------------
+    The long-form capability page. One big block per feature, each showing the
+    summary plus its four documented control points.
+
+    The list comes from Services/FeatureCatalog.cs (FeatureCatalog.All). Add a
+    Feature there and a new block appears here with no markup changes.
+
+    Linked from: the header Product dropdown, the home page feature grid, and
+    the footer "Product" column.
+*@
+
+<PageTitle>Polypus features - extraction, validation and governed SAP posting</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="Layout-aware extraction, three-way matching, duplicate control, review tooling, audit trails and governed SAP posting through IDoc, BAPI and OData." />
+</HeadContent>
+
+<PageHero Section="Features"
+          Eyebrow="Capabilities"
+          Title="Ten capabilities, one governed pipeline"
+          Lead="Polypus handles the whole journey: reading an unpredictable document, proving the numbers are right, and writing to SAP through interfaces your BASIS team already supports. Everything below is in every plan except where the pricing table says otherwise." />
+
+<section class="section section--flush">
+    <div class="container container--narrow">
+        <div class="stack">
+            @foreach (var feature in FeatureCatalog.All)
+            {
+                <article class="feature-detail" id="@feature.Id">
+                    <div class="feature-detail__head">
+                        <span class="feature-detail__icon"><AppIcon Name="@feature.Icon" Size="24" /></span>
+                        <div>
+                            <h3>@feature.Title</h3>
+                            <p>@feature.Summary</p>
+                        </div>
+                    </div>
+
+                    <ul class="check-list">
+                        @foreach (var detail in feature.Details)
+                        {
+                            <li>
+                                <AppIcon Name="check" Size="16" />
+                                <span>@detail</span>
+                            </li>
+                        }
+                    </ul>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="Document coverage"
+                       Title="What Polypus reads today"
+                       Description="New document types are added by configuration, not by a development project. If your type is not listed, ask - the answer is usually a short pilot." />
+
+        <div class="doc-strip mt-6">
+            @foreach (var docType in ProductProfile.DocumentTypes)
+            {
+                <span>@docType</span>
+            }
+        </div>
+
+        <div class="plans__toolbar plans__toolbar--center mt-7">
+            <a class="btn btn--primary btn--lg" href="/contact">
+                Contact Us
+                <AppIcon Name="arrow-right" Size="18" />
+            </a>
+            @* <a class="btn btn--ghost btn--lg" href="/plans">See what it costs</a> *@
+        </div>
+    </div>
+</section>

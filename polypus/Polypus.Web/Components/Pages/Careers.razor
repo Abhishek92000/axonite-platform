@@ -1,0 +1,180 @@
+@page "/careers"
+@*
+    Careers.razor  -  route /careers
+    ------------------------------------------------------------------------
+    Open roles. Deliberately simple: the roles live in the OpenRoles list below
+    because they change more often than the rest of the site's content.
+
+    Roles are sample content for the template - replace with real vacancies, or
+    point the page at an ATS (Greenhouse, Lever, Workable) by swapping the apply
+    links for the ATS URL.
+
+    Linked from the footer "Company" column.
+*@
+
+<PageTitle>Careers at Axonite - build Polypus</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="Open roles at Axonite, the company behind Polypus: integration engineering, delivery, applied document AI and support in Pune, Amsterdam and Dubai." />
+</HeadContent>
+
+<PageHero Section="Careers"
+          Eyebrow="Join us"
+          Title="Build the thing that replaces the re-keying"
+          Lead="We are a product company, not a body shop. Engineers here own pipelines end to end and talk directly to the finance teams who run them."
+          Pills="_pills" />
+
+<section class="section section--flush">
+    <div class="container container--narrow">
+        <SectionHeading Eyebrow="Open roles"
+                       Title="Six positions across three locations" />
+
+        <div class="stack mt-6">
+            @foreach (var role in OpenRoles)
+            {
+                <article class="feature-detail">
+                    <div class="feature-detail__head">
+                        <span class="feature-detail__icon"><AppIcon Name="users" Size="22" /></span>
+                        <div>
+                            <h3>@role.Title</h3>
+                            <p>@role.Summary</p>
+                        </div>
+                    </div>
+
+                    <div class="page-hero__meta">
+                        <span class="pill">@role.Location</span>
+                        <span class="pill">@role.Team</span>
+                        <span class="pill">@role.Level</span>
+                    </div>
+
+                    <ul class="check-list">
+                        @foreach (var requirement in role.Requirements)
+                        {
+                            <li>
+                                <AppIcon Name="check" Size="16" />
+                                <span>@requirement</span>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="plans__toolbar">
+                        <a class="btn btn--ghost btn--sm"
+                           href="@($"mailto:{CompanyProfile.SalesEmail}?subject={Uri.EscapeDataString($"Application: {role.Title}")}")">
+                            Apply by email
+                            <AppIcon Name="arrow-right" Size="15" />
+                        </a>
+                        <span class="text-xs muted">@role.Note</span>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="How we hire"
+                       Title="Four steps, two weeks, no unpaid homework sprints"
+                       Align="center" />
+
+        <div class="process mt-7">
+            <div class="process__step">
+                <span class="process__num">01</span>
+                <h3>Intro call</h3>
+                <p>Thirty minutes with the hiring manager about the work, the team and what you want next.</p>
+                <span class="process__time">30 min</span>
+            </div>
+            <div class="process__step">
+                <span class="process__num">02</span>
+                <h3>Technical conversation</h3>
+                <p>A discussion on systems you have actually built - trade-offs, failures, and what you would do differently.</p>
+                <span class="process__time">60 min</span>
+            </div>
+            <div class="process__step">
+                <span class="process__num">03</span>
+                <h3>Paid pairing session</h3>
+                <p>Two hours pairing on a real Polypus problem. Paid at your day rate, not an unpaid take-home.</p>
+                <span class="process__time">2 hours</span>
+            </div>
+            <div class="process__step">
+                <span class="process__num">04</span>
+                <h3>Offer</h3>
+                <p>Decision and written offer, with the salary band published up front rather than negotiated blind.</p>
+                <span class="process__time">48 hours</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>Sample vacancies. Swap for your real openings or an ATS integration.</summary>
+    private static readonly IReadOnlyList<Role> OpenRoles =
+    [
+        new Role(
+            "Senior SAP Integration Engineer",
+            "Own the IDoc, BAPI and OData connectors that post customer documents into production SAP systems.",
+            "Pune, India (hybrid)",
+            "Platform engineering",
+            "Senior",
+            ["Five or more years with SAP integration: IDoc, BAPI/RFC, OData or PI/PO", "Comfortable debugging postings across WE02, WE19, SM58 and the S/4HANA APIs", "Writing production C# or Java services, not just ABAP", "You can explain an authorisation object to a BASIS administrator"],
+            "Published band: Rs 32 - 44 lakh per year"),
+
+        new Role(
+            "Applied Document AI Engineer",
+            "Work on the extraction pipeline: layout analysis, field confidence calibration and the feedback loop from reviewer corrections.",
+            "Pune, India (hybrid)",
+            "Document intelligence",
+            "Senior",
+            ["Strong Python and a track record shipping document or vision models to production", "Experience with OCR, layout detection or document understanding datasets", "You measure models on business outcomes, not only on benchmark splits", "Interest in the unglamorous parts: evaluation sets, drift, data hygiene"],
+            "Published band: Rs 30 - 42 lakh per year"),
+
+        new Role(
+            "Implementation Consultant (SAP Finance)",
+            "Run customer rollouts end to end: rule configuration, tolerance design, shadow runs and go-live support.",
+            "Pune or Amsterdam",
+            "Delivery",
+            "Mid to senior",
+            ["Hands-on accounts payable or SAP FI experience, ideally in a shared service centre", "Comfortable writing configuration rather than code", "You can run a workshop with a controller without hiding behind slides", "Willingness to travel up to 25%"],
+            "Published band: EUR 58 - 76k, or Rs 22 - 30 lakh in Pune"),
+
+        new Role(
+            "Product Designer",
+            "Design the review console and dashboards - the screens finance teams live in for eight hours a day.",
+            "Remote (EU or India)",
+            "Product",
+            "Mid to senior",
+            ["A portfolio of dense, data-heavy product interfaces, not marketing sites", "Comfortable in Figma and able to work from real data rather than lorem ipsum", "You argue for keyboard efficiency and against decorative chrome", "Some HTML and CSS literacy so handoff is a conversation, not a file drop"],
+            "Published band: EUR 62 - 82k"),
+
+        new Role(
+            "Customer Support Engineer",
+            "Be the named support engineer for Growth and Business customers, from first ticket to root-cause write-up.",
+            "Pune, India",
+            "Support",
+            "Mid",
+            ["You can read a log, form a hypothesis and reproduce a customer issue before escalating", "Basic SQL and comfort with REST APIs and webhooks", "Excellent written English; you will write most of your answers", "Prior experience supporting enterprise software or SAP-adjacent tooling"],
+            "Published band: Rs 12 - 18 lakh per year"),
+
+        new Role(
+            "Technical Writer",
+            "Own the implementation guide, API reference and in-product help for every release.",
+            "Remote (India or EU)",
+            "Product",
+            "Mid",
+            ["Experience writing developer and administrator documentation, not marketing copy", "Comfortable reading code and running a local environment to verify steps", "You treat docs as a product with owners, versions and metrics", "Interest in the support content that reduces ticket volume"],
+            "Published band: EUR 48 - 62k")
+    ];
+
+    private static readonly IReadOnlyList<string> _pills = ["240+ people", "Pune · Amsterdam · Dubai", "Hybrid and remote roles"];
+
+    /// <summary>Shape of a vacancy shown on this page.</summary>
+    private sealed record Role(
+        string Title,
+        string Summary,
+        string Location,
+        string Team,
+        string Level,
+        IReadOnlyList<string> Requirements,
+        string Note);
+}

@@ -1,0 +1,223 @@
+@page "/workforce/delivery-notes"
+@rendermode InteractiveServer
+@*
+    DeliveryNotes.razor - route /workforce/delivery-notes
+    ------------------------------------------------------------------------
+    A faithful build of the reference Delivery Notes page, using Polypus
+    branding:
+
+      1. Hero "For finance teams who are done guessing pay or hold." with a
+         Start Now button
+      2. How it works - the partial-deliveries narrative beside a goods-receipt
+         card that shows a partial delivery recorded line by line
+      3. GBS Skills turning delivery notes into reliable receipts - all 12
+         skills from the reference, each tagged Low / Medium / High complexity
+      4. Closing CTA "Close the gap between what arrived and what gets paid"
+      5. The five reference questions, using the shared FaqList accordion
+
+    Copy is carried verbatim from the reference; only the brand name is swapped
+    (Hypatos -> Polypus). Styles live in DeliveryNotes.razor.css and use the
+    Polypus design tokens, so nothing here copies the reference theme.
+
+    Linked from: the /workforce bundle grid.
+*@
+
+<PageTitle>Delivery Notes - Polypus Workforce</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="A workforce turning delivery notes into validated receipts, so finance decides pay or hold on facts." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section dn-hero">
+    <div class="container">
+        <div class="dn-hero__inner">
+            <p class="eyebrow">The GBS Workforce for Delivery Notes</p>
+            <h1 class="display dn-hero__title">For finance teams who are <em>done guessing</em> pay or hold.</h1>
+
+            <div class="dn-hero__action">
+                <a class="btn btn--primary btn--lg" href="#dn-skills">
+                    Start Now
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. How it works
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <div class="dn-how">
+            <div>
+                <p class="eyebrow">How it works</p>
+                <h2 class="h2 mt-2">A workforce making even partial deliveries a breeze</h2>
+                <p class="dn-how__body mt-4">
+                    Agents capture delivery notes from email, EDI, carrier portal, or scan, and
+                    validate them against the PO. Mismatches are flagged and resolved before AP sees
+                    the invoice. Once posted, the goods receipt and decision log keep Finance,
+                    Procurement, and suppliers aligned.
+                </p>
+            </div>
+
+            <div class="dn-receipt" aria-hidden="true">
+                <div class="dn-receipt__head">
+                    <span class="dn-receipt__title">Goods receipt</span>
+                    <span class="dn-receipt__ref">PO 4500012345</span>
+                </div>
+
+                @foreach (var line in ReceiptLines)
+                {
+                    <div class="dn-receipt__row">
+                        <span class="dn-receipt__line">@line.Line</span>
+                        <span class="dn-receipt__qty">@line.Quantity</span>
+                        <span class="dn-status dn-status--@line.State">
+                            <AppIcon Name="@line.Icon" Size="12" />
+                            @line.Label
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Skills library
+   ========================================================================== *@
+<section class="section" id="dn-skills">
+    <div class="container">
+        <SectionHeading Eyebrow="Skills library"
+                       Title="GBS Skills turning delivery notes into reliable receipts"
+                       Description="Every skill below is pre-packaged and live in production. The complexity tag shows how much context a skill weighs before it posts an outcome." />
+
+        <div class="dn-skills mt-7">
+            @foreach (var skill in Skills)
+            {
+                <article class="dn-skill">
+                    <span class="dn-tag dn-tag--@skill.Complexity">@ComplexityLabel(skill.Complexity)</span>
+                    <h3 class="dn-skill__title">@skill.Title</h3>
+                    <p class="dn-skill__body">@skill.Body</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Closing CTA
+   ========================================================================== *@
+<section class="section">
+    <div class="container">
+        <div class="dn-cta">
+            <h2><em>Close the gap</em> between what arrived and what gets paid</h2>
+
+            <div class="dn-cta__actions">
+                <a class="btn btn--primary btn--lg" href="/contact">
+                    Book a walkthrough
+                    <AppIcon Name="arrow-right" Size="18" />
+                </a>
+                <a class="btn btn--on-dark btn--lg" href="/contact">Get in Touch</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   5. Frequently Asked Questions
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container container--narrow">
+        <SectionHeading Eyebrow="Questions" Title="Frequently Asked Questions" Align="center" />
+        <FaqList Items="Questions" CssClass="mt-7" />
+    </div>
+</section>
+
+@code {
+    private sealed record ReceiptLine(string Line, string Quantity, string Label, string State, string Icon);
+
+    private static readonly ReceiptLine[] ReceiptLines =
+    [
+        new("Line 10, steel brackets", "120 / 120", "Received", "ok", "check"),
+        new("Line 20, fasteners", "480 / 800", "Partial", "part", "alert"),
+        new("Line 30, cable ties", "60 / 60", "Received", "ok", "check"),
+        new("Line 40, fixings", "0 / 250", "Back order", "part", "alert")
+    ];
+
+    private sealed record Skill(string Title, string Body, string Complexity);
+
+    private static readonly Skill[] Skills =
+    [
+        new("Input Validation", "Check that everything is in order at the door. AI Agents flag errors before they disrupt downstream processes.", "low"),
+        new("Document Routing", "Send it where it belongs. AI Agents route documents to the right agent or escalate to a human operator.", "low"),
+        new("Document Classification", "Sort with intelligence. AI Agents identify document types at scale, no templates needed.", "low"),
+        new("Document Splitting", "AI Agents detect multi-doc files and auto-split into clean, process-ready pages according to internal business logic.", "medium"),
+        new("Information Extraction", "Find what matters, fast. AI Agents pull key data from any format with high accuracy and nothing unnecessary.", "medium"),
+        new("Document Translation", "Machine-translate image content into a target language while preserving layout and key fields. E.g. a Japanese document looks like an English document after transformation.", "medium"),
+        new("Duplicate Prevention", "No more double entries. AI Agents detect and block duplicates before they hurt your bottom-line.", "medium"),
+        new("PO Enrichment", "Match faster, with fewer errors. AI agents automate accuracy across every PO line.", "high"),
+        new("Supplier Master Enrichment", "Know your vendor, instantly. AI agents match every supplier record and enrich it with IDs, banking details, and key attributes.", "high"),
+        new("Company Master Enrichment", "Every transaction has one true owner. AI agents cut through attribution mess and assign the correct legal entity\u2014using ERP and MDM data.", "high"),
+        new("Supplier & Approver Communication", "No more chasing. AI agents send the right message to the right person at the right time\u2014keeping transactions moving even when unexpected bumps happen.", "high"),
+        new("Custom Master Data Enrichment", "Enrichment of a custom master data object from a source system. Record identification relies on structured master data. Master data is integrated with Polypus at an additional cost.", "high")
+    ];
+
+    private static readonly IReadOnlyList<Faq> Questions =
+    [
+        new Faq
+        {
+            Category = "Delivery Notes",
+            Question = "What does the Delivery Notes Workforce do?",
+            Answer = "The Polypus Delivery Notes Workforce turns delivery notes into validated goods " +
+                     "receipts: capturing the document, matching lines against the order, and " +
+                     "recording what actually arrived, so finance decides pay or hold on facts."
+        },
+        new Faq
+        {
+            Category = "Delivery Notes",
+            Question = "How does the Delivery Notes Workforce handle partial deliveries?",
+            Answer = "Line by line. A partial delivery is recorded as exactly that, so the receipt " +
+                     "reflects reality and the next delivery reconciles against what remains."
+        },
+        new Faq
+        {
+            Category = "Delivery Notes",
+            Question = "Why do delivery notes matter for accounts payable?",
+            Answer = "They are the evidence between the order and the invoice. Reliable receipts make " +
+                     "invoice matching decisions grounded instead of guessed, which protects both " +
+                     "margins and supplier relationships."
+        },
+        new Faq
+        {
+            Category = "Delivery Notes",
+            Question = "Which document formats and document types are supported?",
+            Answer = "The Polypus Delivery Notes Workforce captures delivery notes as scanned paper " +
+                     "notes, images, PDFs, XML/JSON, or Word and Excel files, including " +
+                     "multi-document batches, however they arrive: by email, scan, e-invoicing, or " +
+                     "API integration."
+        },
+        new Faq
+        {
+            Category = "Delivery Notes",
+            Question = "What is the cost of the Delivery Notes Workforce?",
+            Answer = "Calculating the cost of your Delivery Notes Workforce depends on the GBS Skills " +
+                     "it includes and how many times each GBS Skill is applied in order to process a " +
+                     "document. E.g.: if a delivery note does not require explicit confirmation by " +
+                     "an internal approver, the Supplier & Approver Communication skill does not get " +
+                     "triggered, and therefore does not incur a cost."
+        }
+    ];
+
+    private static string ComplexityLabel(string complexity) => complexity switch
+    {
+        "low" => "Low complexity",
+        "medium" => "Medium complexity",
+        "high" => "High complexity",
+        _ => complexity
+    };
+}
+

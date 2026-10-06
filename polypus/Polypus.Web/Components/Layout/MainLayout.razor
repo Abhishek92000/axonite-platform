@@ -1,0 +1,36 @@
+﻿@*
+    MainLayout.razor
+    ------------------------------------------------------------------------
+    The shell every page renders inside. It answers exactly one question:
+    "what appears above and below the page content?"
+
+        Skip link  -> keyboard users jump straight to the main content
+        Header     -> logo, navigation, dropdown, mobile menu
+        <main>     -> the current page (LayoutComponentBase.Body)
+        Footer     -> link columns, legal links, status
+
+    Note: this layout is statically server rendered. The interactive parts
+    (Header, Contact form) opt in individually with their own @rendermode,
+    which keeps the rest of the page fast and simple.
+
+    How to change something
+      * Add something to every page -> add it here.
+      * Add something to one page  -> put it in that page's .razor file.
+*@
+@inherits LayoutComponentBase
+
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<Header />
+
+<main id="main-content">
+    @Body
+</main>
+
+<Footer />
+
+<div id="blazor-error-ui" data-nosnippet>
+    Something went wrong. Reload the page to try again.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">&#215;</span>
+</div>

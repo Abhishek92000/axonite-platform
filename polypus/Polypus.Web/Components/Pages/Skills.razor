@@ -1,0 +1,221 @@
+@page "/skills"
+@rendermode InteractiveServer
+@*
+    Skills.razor - route /skills
+    ------------------------------------------------------------------------
+    A faithful build of the reference Skills page, using Polypus branding:
+
+      1. Hero "Scaled GBS run on the right skills"
+      2. GBS Skills by complexity - four cards (Low / Medium / High / Expert)
+      3. GBS Skills in production - the full 28-skill library with a working
+         complexity filter (All / Low / Medium / High / Expert)
+      4. The four reference questions, using the shared FaqList accordion
+
+    Copy is carried verbatim from the reference; only the brand name is swapped
+    (Hypatos -> Polypus). Styles live in Skills.razor.css and use the Polypus
+    design tokens, so nothing here copies the reference theme. The filter chips
+    reuse the shared .filter-chip/.toggle-group pattern from app.css.
+
+    Linked from: the header "Workforce" menu and /workforce.
+*@
+
+<PageTitle>GBS Skills - Polypus</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="A growing library of pre-packaged GBS skills across four levels of complexity, ready to go live in a Polypus workforce." />
+</HeadContent>
+
+@* ==========================================================================
+   1. Hero
+   ========================================================================== *@
+<section class="section sk-hero">
+    <div class="container">
+        <div class="sk-hero__inner">
+            <p class="eyebrow">Polypus GBS Skills</p>
+            <h1 class="display sk-hero__title">Scaled GBS run on the <em>right skills</em></h1>
+            <p class="sk-hero__copy">
+                Polypus offers a growing library of pre-packaged GBS Skills. Pick the ones your
+                process needs and our agents will deliver them.
+            </p>
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   2. Complexity cards
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container">
+        <SectionHeading Eyebrow="GBS Skills by complexity"
+                       Title="Skills vary in complexity to match every step of your GBS process" />
+
+        <div class="sk-complexity mt-7">
+            @foreach (var level in Levels)
+            {
+                <article class="sk-complexity__card sk-complexity__card--@level.Key">
+                    <h3 class="sk-complexity__title">@level.Title</h3>
+                    <p class="sk-complexity__copy">@level.Copy</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   3. Skills library
+   ========================================================================== *@
+<section class="section" id="sk-library">
+    <div class="container">
+        <SectionHeading Eyebrow="GBS Skills in production"
+                       Title="A library of GBS Skills ready to go live"
+                       Description="Every skill below is pre-packaged and live in production. Filter by complexity to see what fits each step of your process." />
+
+        <div class="sk-filter" role="group" aria-label="Filter skills by complexity">
+            <button type="button"
+                    class="filter-chip"
+                    aria-pressed="@((_filter is null).ToString().ToLowerInvariant())"
+                    @onclick="() => Select(null)">
+                All
+            </button>
+
+            @foreach (var level in Levels)
+            {
+                var key = level.Key;
+                <button type="button"
+                        class="filter-chip"
+                        aria-pressed="@(string.Equals(_filter, key, StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
+                        @onclick="() => Select(key)">
+                    @level.Title
+                </button>
+            }
+        </div>
+
+        <p class="text-sm muted mt-4">
+            Showing @Filtered.Count of @AllSkills.Length skills
+        </p>
+
+        <div class="sk-grid mt-2">
+            @foreach (var skill in Filtered)
+            {
+                <article class="sk-skill">
+                    <span class="sk-tag sk-tag--@skill.Complexity">@ComplexityLabel(skill.Complexity)</span>
+                    <h3 class="sk-skill__title">@skill.Title</h3>
+                    <p class="sk-skill__body">@skill.Body</p>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@* ==========================================================================
+   4. Frequently Asked Questions
+   ========================================================================== *@
+<section class="section section--paper-alt">
+    <div class="container container--narrow">
+        <SectionHeading Eyebrow="Questions" Title="Frequently Asked Questions" Align="center" />
+        <FaqList Items="Questions" CssClass="mt-7" />
+    </div>
+</section>
+
+@code {
+    /// <summary>Selected complexity key, or null for "All".</summary>
+    private string? _filter;
+
+    private void Select(string? key) => _filter = key;
+
+    /// <summary>The skills matching the current filter.</summary>
+    private IReadOnlyList<Skill> Filtered =>
+        _filter is null
+            ? AllSkills
+            : AllSkills.Where(s => string.Equals(s.Complexity, _filter, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    private sealed record Level(string Key, string Title, string Copy);
+
+    private static readonly Level[] Levels =
+    [
+        new("low", "Low complexity", "Skills that follow fixed rules, such as routing a document or checking a field is filled in correctly."),
+        new("medium", "Medium complexity", "Skills that read and interpret content, such as classifying a document type or extracting data from it."),
+        new("high", "High complexity", "Skills that cross-check information across systems, such as matching an invoice to a purchase order."),
+        new("expert", "Expert complexity", "Skills that require specialized knowledge, such as validating tax compliance or handling country-specific regulations.")
+    ];
+
+    private sealed record Skill(string Title, string Body, string Complexity);
+
+    private static readonly Skill[] AllSkills =
+    [
+        new("Input Validation", "Check that everything is in order at the door. AI Agents flag errors before they disrupt downstream processes.", "low"),
+        new("Document Routing", "Send it where it belongs. AI Agents route documents to the right agent or escalate to a human operator.", "low"),
+        new("Document Classification", "Sort with intelligence. AI Agents identify document types at scale, no templates needed.", "low"),
+        new("Document Splitting", "AI Agents detect multi-doc files and auto-split into clean, process-ready pages according to internal business logic.", "medium"),
+        new("Document Auto-rejection", "AI Agents reject non-processable or non-compliant items (missing mandatory data, policy violations) with reason codes.", "medium"),
+        new("Information Extraction", "Find what matters, fast. AI Agents pull key data from any format with high accuracy and nothing unnecessary.", "medium"),
+        new("Document Translation", "Machine-translate image content into a target language while preserving layout and key fields; e.g. a Japanese document reads like an EN one.", "medium"),
+        new("Duplicate Prevention", "No more double entries. AI Agents detect and block duplicates before they hurt your bottom-line.", "medium"),
+        new("e-Invoicing", "Mandates are here - comply with xRechnung, ZUGFeRD 2.3, Factur-X, FatturaPA, RO e-Factura, FA(2) - KSeF & more.", "medium"),
+        new("PO Enrichment", "Match faster, with fewer errors. AI agents automate accuracy across every PO line.", "high"),
+        new("Supplier Master Enrichment", "Know your vendor, instantly. AI agents match every supplier record and enrich it with IDs, banking details, and key attributes.", "high"),
+        new("Approver Enrichment", "AI agents route transactions to the correct approver instantly, based on authority matrix, spend thresholds, and policy.", "high"),
+        new("Payment Term Enrichment", "Make early-pay discounts the standard. AI agents apply the right payment logic to every transaction from your master data or contracts.", "high"),
+        new("Central Bank Indicator Enrichment", "Statutory fields, handled. AI agents populate regulatory indicators from rules and master data; no manual effort required.", "high"),
+        new("Company Master Enrichment", "Every transaction has one true owner. AI agents cut through attribution mess and assign the correct legal entity using ERP and MDM data.", "high"),
+        new("Shipping Address Enrichment", "AI agents remove the stress of guesswork by matching and enriching every ship-to record at header and line level automatically.", "high"),
+        new("Reference Sales Document Enrichment", "AI agents enrich quotes, contracts, and sales orders - extracting data and filling gaps so your team closes faster.", "high"),
+        new("Responsibility Determination", "Every item finds its owner. AI agents assign the right team, person, or queue - based on account, channel, and SLA.", "high"),
+        new("Customer Master Enrichment", "Know your customer, instantly. AI Agents unify and reconcile account records across systems.", "high"),
+        new("Contract Enrichment", "Terms and clauses that inform decisions in real time. AI agents pull contract metadata to power smarter validations and matching.", "high"),
+        new("Product Matching", "No surprises in sales. AI Agents validate every order with the latest product or material master data.", "high"),
+        new("Supplier & Approver Communication", "AI agents send the right message to the right person at the right time keeping transactions moving even when unexpected bumps happen.", "high"),
+        new("Custom Master Data Enrichment", "Enrichment of a custom master data object from a source system, using structured MD records integrated with Polypus.", "high"),
+        new("Input Sorting", "Analyzes incoming files and emails to group related documents into cases. Replaces manual sorting, ensuring cases are pre-organized for processing.", "high"),
+        new("Account Coding", "Books that balance themselves. AI Agents predict GL accounts, cost centers, and coding dimensions from context, policy, and history.", "expert"),
+        new("VAT Tax Compliance Validation", "Compliant invoices, confident audits. AI agents check VAT rules and statutory requirements, leaving a clear, explainable trail.", "expert"),
+        new("VAT Tax Coding", "AI agents analyze jurisdiction, goods movement, transaction context to assign the VAT, GST, or sales tax code with full reasoning you can audit.", "expert"),
+        new("US Sales Tax Validation", "Stay compliant across the US. AI Agents validate US sales tax instantly, powered by Vertex.", "expert")
+    ];
+
+    private static readonly IReadOnlyList<Faq> Questions =
+    [
+        new Faq
+        {
+            Category = "Skills",
+            Question = "What is a GBS skill?",
+            Answer = "A reusable capability specialized in doing one job: validating input, classifying " +
+                     "a document, extracting information, preventing duplicates, and so on. Skills are " +
+                     "the building blocks Polypus agents combine to run a process."
+        },
+        new Faq
+        {
+            Category = "Skills",
+            Question = "What do the complexity levels mean?",
+            Answer = "Skills span four levels of task complexity: low, medium, high and expert. A " +
+                     "low-complexity skill runs a fixed check; an expert skill weighs specialized " +
+                     "context before posting an outcome. The higher levels are what let teams handle " +
+                     "true end-to-end processes rather than just capture documents."
+        },
+        new Faq
+        {
+            Category = "Skills",
+            Question = "Are the skills ready to use?",
+            Answer = "Yes. The library is live in production, and each skill is built to fit the " +
+                     "workforce you go live with."
+        },
+        new Faq
+        {
+            Category = "Skills",
+            Question = "Can skills be combined?",
+            Answer = "Yes. Skills define what your selected workforce will do and come pre-packaged " +
+                     "in it. You choose which of the pre-packaged skills go live and which are left " +
+                     "out, so you do not pay for what you do not use."
+        }
+    ];
+
+    private static string ComplexityLabel(string complexity) => complexity switch
+    {
+        "low" => "Low complexity",
+        "medium" => "Medium complexity",
+        "high" => "High complexity",
+        "expert" => "Expert complexity",
+        _ => complexity
+    };
+}
+

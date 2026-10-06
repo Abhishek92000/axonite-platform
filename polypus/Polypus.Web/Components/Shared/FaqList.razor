@@ -1,0 +1,74 @@
+@*
+    FaqList.razor
+    ------------------------------------------------------------------------
+    An accessible accordion for a list of questions. Used on the home page, the
+    plans page, the integrations page and the help centre.
+
+    Why a component
+      The same accordion appears four times. One implementation means one place
+      to fix behaviour, and the open/closed state stays local to the list rather
+      than being duplicated in every page's @code block.
+
+    Accessibility
+      Each question is a real <button> with aria-expanded, and the answer is
+      only rendered while open, so screen readers and search engines see a clean
+      question/answer pairing. It also works with the keyboard by default.
+
+    Usage
+      <FaqList Items="FaqCatalog.HomeHighlights" />
+*@
+
+<div class="faq @CssClass">
+    @foreach (var item in Items)
+    {
+        var faq = item;
+        var isOpen = _open == faq.Question;
+
+        <div class="faq__item @(isOpen ? "is-open" : null)">
+            <button type="button"
+                    class="faq__q"
+                    aria-expanded="@(isOpen ? "true" : "false")"
+                    @onclick="() => Toggle(faq.Question)">
+                <span>
+                    @if (ShowCategory)
+                    {
+                        <span class="faq__category">@faq.Category</span>
+                    }
+                    @faq.Question
+                </span>
+                <span class="faq__icon"><AppIcon Name="plus" Size="18" /></span>
+            </button>
+
+            @if (isOpen)
+            {
+                <div class="faq__a">@faq.Answer</div>
+            }
+        </div>
+    }
+
+    @if (Items.Count == 0)
+    {
+        <div class="empty-state">
+            <p class="mb-0">No questions match that search yet.</p>
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>The questions to show, in order. Filtering happens before this point.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<Faq> Items { get; set; } = [];
+
+    /// <summary>Shows the category label above each question (help centre only).</summary>
+    [Parameter]
+    public bool ShowCategory { get; set; }
+
+    /// <summary>Extra classes for the wrapper, e.g. spacing utilities.</summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    /// <summary>Question text of the expanded item, or null when all are collapsed.</summary>
+    private string? _open;
+
+    private void Toggle(string question) => _open = _open == question ? null : question;
+}

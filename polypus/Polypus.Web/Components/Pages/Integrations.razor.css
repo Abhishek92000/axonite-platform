@@ -1,0 +1,251 @@
+/* ============================================================================
+   Polypus - Connectors.razor.css
+   ----------------------------------------------------------------------------
+   Scoped styles for /integrations. Mirrors the reference page structure (hero,
+   four connector cards, a data-flow section, a reliability stat row, closing
+   CTA) using the Polypus design tokens from app.css.
+
+   Sections:
+     1. Hero
+     2. Connector cards
+     3. Data flow
+     4. Reliability stats
+     5. Closing CTA
+     6. Responsive
+   ========================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Hero
+   --------------------------------------------------------------------------- */
+.ct-hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: var(--s-8) var(--s-9);
+    border-top: 0;
+}
+
+.ct-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(60rem 30rem at 88% -12%, rgba(15, 118, 110, 0.11), transparent 60%),
+        radial-gradient(40rem 24rem at 6% 0%, rgba(198, 158, 78, 0.1), transparent 62%);
+    pointer-events: none;
+}
+
+.ct-hero .container { position: relative; }
+
+.ct-hero__inner { max-width: 58ch; }
+
+.ct-hero__title { max-width: 16ch; }
+
+.ct-hero em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--accent);
+}
+
+.ct-hero__copy {
+    margin-top: var(--s-5);
+    max-width: 62ch;
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Connector cards
+   --------------------------------------------------------------------------- */
+.ct-connectors {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s-5);
+}
+
+.ct-connector {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-7) var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.ct-connector:hover {
+    border-color: #d3cec4;
+    box-shadow: var(--sh-2);
+    transform: translateY(-2px);
+}
+
+.ct-connector__head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.9rem;
+}
+
+.ct-connector__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex: none;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    color: var(--accent);
+}
+
+.ct-connector__title {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    letter-spacing: -0.01em;
+}
+
+.ct-connector__copy {
+    margin-bottom: var(--s-5);
+    color: var(--ink-2);
+    font-size: 0.925rem;
+    line-height: 1.65;
+}
+
+.ct-connector__action { margin-top: auto; }
+
+/* ---------------------------------------------------------------------------
+   3. Data flow
+   --------------------------------------------------------------------------- */
+.ct-flow {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-5);
+}
+
+.ct-flow__card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+}
+
+.ct-flow__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: var(--s-4);
+    border-radius: var(--r-sm);
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.ct-flow__title {
+    margin-bottom: 0.5rem;
+    font-size: 1.02rem;
+    font-weight: 600;
+}
+
+.ct-flow__text {
+    margin: 0;
+    color: var(--ink-3);
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Reliability stats
+   --------------------------------------------------------------------------- */
+.ct-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--s-5);
+    margin-top: var(--s-7);
+}
+
+.ct-stat {
+    padding: var(--s-6);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    border-radius: var(--r-md);
+    background: var(--white);
+    box-shadow: var(--sh-1);
+}
+
+.ct-stat__value {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+}
+
+.ct-stat__label {
+    margin-top: 0.3rem;
+    color: var(--ink-3);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------------------
+   5. Closing CTA
+   --------------------------------------------------------------------------- */
+.ct-cta {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-7);
+    align-items: center;
+    padding: var(--s-8);
+    border-radius: var(--r-md);
+    background: var(--dark);
+    color: var(--ink-inverse-2);
+}
+
+.ct-cta h2 {
+    color: var(--ink-inverse);
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+    letter-spacing: -0.015em;
+}
+
+.ct-cta p {
+    margin-top: 0.8rem;
+    max-width: 58ch;
+    line-height: 1.7;
+}
+
+.ct-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    justify-self: end;
+}
+
+/* ---------------------------------------------------------------------------
+   6. Responsive
+   --------------------------------------------------------------------------- */
+@media (max-width: 1080px) {
+    .ct-connectors { grid-template-columns: minmax(0, 1fr); }
+
+    .ct-flow { grid-template-columns: minmax(0, 1fr); }
+
+    .ct-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .ct-cta { grid-template-columns: minmax(0, 1fr); }
+
+    .ct-cta__actions { justify-self: start; }
+}
+
+@media (max-width: 720px) {
+    .ct-stats { grid-template-columns: minmax(0, 1fr); }
+
+    .ct-cta { padding: var(--s-7) var(--s-6); }
+
+    .ct-cta__actions,
+    .ct-cta__actions .btn { width: 100%; }
+}
