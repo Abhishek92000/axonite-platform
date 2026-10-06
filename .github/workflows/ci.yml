@@ -32,13 +32,13 @@ jobs:
       - name: Restore
         run: |
           dotnet restore backend/Calid.Api.csproj
-          dotnet restore polypus/Polypus.Web.csproj
+          dotnet restore polypus/Polypus.Web/Polypus.Web.csproj
 
       - name: Build backend
         run: dotnet build backend/Calid.Api.csproj --configuration Release --no-restore
 
       - name: Build web
-        run: dotnet build polypus/Polypus.Web.csproj --configuration Release --no-restore
+        run: dotnet build polypus/Polypus.Web/Polypus.Web.csproj --configuration Release --no-restore
 
       # Runs only when a test project exists, so the workflow stays green before one is added.
       - name: Test
